@@ -14,4 +14,4 @@ ENV H2_OPTIONS ""
 
 RUN mkdir /opt/app
 COPY target/portfolio-manager-0.0.1-SNAPSHOT.jar /opt/app
-CMD ["/var/lib/h2/h2.sh &;", "java", "-Dspring.profiles.active=prod", "-jar", "/opt/app/portfolio-manager-0.0.1-SNAPSHOT.jar"]
+CMD /var/lib/h2/h2.sh ; java -Dspring.profiles.active=prod -jar /opt/app/portfolio-manager-0.0.1-SNAPSHOT.jar
