@@ -30,7 +30,7 @@ jobs:
         cache: maven
 
     - name: Build with Maven
-      run: mvn -B -DdatasourceUrl=${{ secrets.DATASOURCE_URL }}  -DdatasourceUser=${{ secrets.DATASOURCE_USER }} -DdatasourcePassword=${{ secrets.DATASOURCE_PASSWORD }} package
+      run: mvn -B -DdatasourceUrl=${{ secrets.DATASOURCE_URL }} -DdatasourceUser=${{ secrets.DATASOURCE_USERNAME }} -DdatasourcePassword=${{ secrets.DATASOURCE_PASSWORD }} package
 
     - name: Build and publish docker image
       uses: mr-smithers-excellent/docker-build-push@v5
