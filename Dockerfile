@@ -1,6 +1,7 @@
 FROM adoptopenjdk/openjdk11:latest
 
 EXPOSE 8080
+EXPOSE 8082
 EXPOSE 9082
 
 VOLUME /usr/lib/h2
