@@ -5,7 +5,6 @@ EXPOSE 8080
 #EXPOSE 9082
 
 #VOLUME /usr/lib/h2
-#RUN mkdir /opt/app/db
 VOLUME /opt/app/db
 
 #ENV H2_VERSION "1.4.200"
@@ -15,7 +14,7 @@ VOLUME /opt/app/db
 #ENV JAVA_OPTIONS ""
 #ENV H2_OPTIONS ""
 
-RUN mkdir /opt/app/db
+#RUN mkdir /opt/app/db
 COPY target/portfolio-manager-0.0.1-SNAPSHOT.jar /opt/app
 
 CMD java -Dspring.profiles.active=prod -jar /opt/app/portfolio-manager-0.0.1-SNAPSHOT.jar
