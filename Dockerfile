@@ -5,6 +5,7 @@ EXPOSE 8080
 #EXPOSE 9082
 
 #VOLUME /usr/lib/h2
+RUN mkdir /opt/app/db
 VOLUME /opt/app/db
 
 #ENV H2_VERSION "1.4.200"
