@@ -17,4 +17,4 @@ VOLUME /opt/app/db
 #RUN mkdir /opt/app/db
 COPY target/portfolio-manager-0.0.1-SNAPSHOT.jar /opt/app
 
-CMD java -Dspring.profiles.active=prod -jar /opt/app/portfolio-manager-0.0.1-SNAPSHOT.jar
+CMD ["java", "-Dspring.profiles.active=prod", "-jar", "/opt/app/portfolio-manager-0.0.1-SNAPSHOT.jar"]
