@@ -1,5 +1,6 @@
 package piotrholda.portfoliomanager.rest;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,6 +17,7 @@ class SecurityControllerTest {
     @Autowired
     private SecurityController securityController;
 
+    @Disabled
     @Test
     void should() {
 
