@@ -1,5 +1,7 @@
 package piotrholda.portfoliomanager.rest;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.axonframework.extensions.reactor.commandhandling.gateway.ReactorCommandGateway;
 import org.axonframework.extensions.reactor.queryhandling.gateway.ReactorQueryGateway;
@@ -21,6 +23,7 @@ import java.util.UUID;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/v1/security")
+@Tag(name = "Security", description = "Security management API")
 public class SecurityController {
 
     public static final int TIMEOUT_SECONDS = 5;
@@ -29,6 +32,7 @@ public class SecurityController {
     private final ReactorQueryGateway reactorQueryGateway;
 
     @PostMapping
+    @Operation(summary = "Create a new security")
     public Mono<SecurityResponseData> create(@RequestBody SecurityRequestData securityRequestData) {
         UUID securityId = UUID.randomUUID();
         return reactorCommandGateway.send(new CreateSecurityCommand(securityId,
