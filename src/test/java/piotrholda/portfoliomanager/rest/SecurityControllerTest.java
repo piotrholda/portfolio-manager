@@ -46,7 +46,7 @@ class SecurityControllerTest {
                 .post()
                 .uri("/v1/security")
                 .contentType(APPLICATION_JSON)
-                .bodyValue(response)
+                .bodyValue(request)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody().json(response);
