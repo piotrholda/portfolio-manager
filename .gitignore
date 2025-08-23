@@ -1,3 +1,4 @@
 .idea
 db/
 target/
+src/main/resources/alphavantage.env

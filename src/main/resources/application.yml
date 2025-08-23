@@ -1,4 +1,5 @@
 spring:
+  config.import: optional:file:.env[.properties]
   jpa:
     open-in-view: false
   jmx:
@@ -11,3 +12,5 @@ spring:
     api-docs:
       enabled: true
       path: /v3/api-docs
+alphavantage:
+  api.key: ${ALPHAVANTAGE_API_KEY}
