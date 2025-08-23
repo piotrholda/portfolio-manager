@@ -23,7 +23,7 @@ class AlphaVantageQuotationSource implements QuotationSource {
         Set<Quotation> quotations = new TreeSet<>();
         TimeSeriesResponse response = historicalService.getDailyHistory(ticker.getCode(), true);
         Map<String, DailyQuote> dailyTimeSeries = response.getDailyTimeSeries();
-     for (String dateString : dailyTimeSeries.keySet()) {
+        for (String dateString : dailyTimeSeries.keySet()) {
             DailyQuote dailyQuote = dailyTimeSeries.get(dateString);
             Quotation quotation = new Quotation();
             quotation.setTicker(ticker);
@@ -31,7 +31,6 @@ class AlphaVantageQuotationSource implements QuotationSource {
             quotation.setClosePrice(Double.valueOf(dailyQuote.getClose()));
             quotations.add(quotation);
         }
-        // Implementation to fetch quotations from Alpha Vantage API
         return new ArrayList<>(quotations);
     }
 }

@@ -18,7 +18,7 @@ class AlphaVantageQuotationSourceTest {
     @Test
     void shouldGetQuotations() {
         // given
-        Ticker ticker = new Ticker("IBM", "NYSE", "USD");
+        Ticker ticker = new Ticker("VT", "NYSE", "USD");
 
         // when
         var quotations = quotationSource.getQuotations(ticker);

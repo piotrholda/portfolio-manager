@@ -75,5 +75,4 @@ public class SecurityEntity implements Serializable {
             return securityId.equals(other.securityId);
         }
     }
-
 }
