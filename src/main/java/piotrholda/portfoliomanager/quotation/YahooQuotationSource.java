@@ -3,19 +3,19 @@ package piotrholda.portfoliomanager.quotation;
 import lombok.extern.slf4j.Slf4j;
 import piotrholda.portfoliomanager.Ticker;
 import piotrholda.portfoliomanager.strategy.Quotation;
-import piotrholda.portfoliomanager.strategy.QuotationSource;
+import piotrholda.portfoliomanager.strategy.GetQuotations;
 import yahoofinance.Stock;
 import yahoofinance.YahooFinance;
 import yahoofinance.histquotes.HistoricalQuote;
 import yahoofinance.histquotes.Interval;
 
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.time.LocalDate;
 import java.util.*;
 
+@Deprecated
 @Slf4j
-class YahooQuotationSource implements QuotationSource {
+class YahooQuotationSource implements GetQuotations {
     @Override
     public List<Quotation> getQuotations(Ticker ticker) {
         long apiDelayMs = 100L;

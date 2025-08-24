@@ -4,7 +4,7 @@ import piotrholda.portfoliomanager.Ticker;
 
 import java.util.List;
 
-public interface QuotationSource {
+public interface GetQuotations {
 
     List<Quotation> getQuotations(Ticker ticker);
 }

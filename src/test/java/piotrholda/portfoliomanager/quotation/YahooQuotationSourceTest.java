@@ -11,6 +11,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Deprecated
 @Disabled("Api disabled by Yahoo.")
 class YahooQuotationSourceTest {
 
