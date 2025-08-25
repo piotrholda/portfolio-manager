@@ -75,7 +75,7 @@ class StrategyController {
         // append current date and time to file name
         String currentDateTime = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME).replace(":", "-").replace(".", "_");
         String fileName = "DualEquityMomentum_" + currentDateTime +".csv";
-        headers.add("Content-Disposition", "attachment; filename"+fileName);
+        headers.add("Content-Disposition", "attachment; filename="+fileName);
         headers.add("Content-Type", "text/csv");
 
         return ResponseEntity.ok()
