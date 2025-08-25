@@ -18,7 +18,7 @@ class DualEquityMomentum implements Strategy {
     private Ticker riskFree;
     private Collection<Ticker> riskOff;
 
-    private Map<Ticker, List<Quotation>> quotations;
+    private Map<Ticker, List<Quotation>> quotations = new HashMap<>();
 
     private List<Transaction> transactions;
 
@@ -126,8 +126,11 @@ class DualEquityMomentum implements Strategy {
         for (List<Quotation> quotationList : quotations.values()) {
             if (!quotationList.isEmpty()) {
                 LocalDate lastDate = quotationList.get(quotationList.size() - 1).getDate();
-                if (!lastDate.isBefore(startDate) && !lastDate.isAfter(endDate)) {
-                    dates.add(lastDate);
+                for (Quotation quotation : quotationList) {
+                    LocalDate date = quotation.getDate();
+                    if (!date.isBefore(startDate) && !date.isAfter(endDate)) {
+                        dates.add(date);
+                    }
                 }
             }
         }

@@ -1,0 +1,44 @@
+{
+  "currencyCode": "USD",
+  "benchmark": {
+    "code": "VT",
+    "exchangeCode": "NYSE",
+    "currencyCode": "USD"
+  },
+  "lookBackPeriod": 12,
+  "riskOffLookBackPeriod": 3,
+  "riskOn": [
+    {
+      "code": "VOO",
+      "exchangeCode": "NYSE",
+      "currencyCode": "USD"
+    },
+    {
+      "code": "VEU",
+      "exchangeCode": "NYSE",
+      "currencyCode": "USD"
+    },
+    {
+      "code": "CWI",
+      "exchangeCode": "NYSE",
+      "currencyCode": "USD"
+    }
+  ],
+  "riskFree": {
+    "code": "BIL",
+    "exchangeCode": "NYSE",
+    "currencyCode": "USD"
+  },
+  "riskOff": [
+    {
+      "code": "AGG",
+      "exchangeCode": "NYSE",
+      "currencyCode": "USD"
+    },
+    {
+      "code": "SCHZ",
+      "exchangeCode": "NYSE",
+      "currencyCode": "USD"
+    }
+  ]
+}
