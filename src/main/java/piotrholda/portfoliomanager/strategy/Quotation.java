@@ -10,6 +10,7 @@ public class Quotation implements Comparable<Quotation> {
     private Ticker ticker;
     private LocalDate date;
     private Double closePrice;
+    private Double adjustedClosePrice;
 
     double profitPercent(Quotation previousQuotation) {
         if (previousQuotation == null || previousQuotation.getClosePrice() == null || this.getClosePrice() == null) {

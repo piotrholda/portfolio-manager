@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  # The Python Flask Microservice
+  python-api:
+    build:
+      context: ./python-stock-api  # Path to the Python app's Dockerfile
+    ports:
+      - "5000:5000"  # Expose port 5000 for direct testing if needed
+    restart: unless-stopped
+
