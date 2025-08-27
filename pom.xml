@@ -46,6 +46,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.datatype</groupId>
+                    <artifactId>jackson-datatype-jsr310</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -109,16 +115,59 @@
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-ui</artifactId>
             <version>1.7.0</version>
+            <exclusions>
+                <exclusion>
+                        <groupId>com.fasterxml.jackson.datatype</groupId>
+                        <artifactId>jackson-datatype-jsr310</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 <!--        <dependency> // For spring boot 3
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>2.8.10</version>
         </dependency>-->
+<!--
         <dependency>
             <groupId>com.yahoofinance-api</groupId>
             <artifactId>YahooFinanceAPI</artifactId>
             <version>3.17.0</version>
+        </dependency>
+-->
+        <dependency>
+            <groupId>org.openapitools</groupId>
+            <artifactId>jackson-databind-nullable</artifactId>
+            <version>0.2.6</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>javax.annotation-api</artifactId>
+            <version>1.3.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+            <version>3.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>2.19.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.19.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>2.19.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>2.19.2</version>
         </dependency>
     </dependencies>
 
@@ -220,6 +269,44 @@
                     <failOnError>false</failOnError>
                     <skip>false</skip>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <!-- Find the latest version on Maven Central -->
+                <version>7.15.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <!-- The URL to your running Python API's OpenAPI spec -->
+                            <inputSpec>http://localhost:5000/openapi.json</inputSpec>
+
+                            <!-- We want to generate a Java client -->
+                            <generatorName>java</generatorName>
+
+                            <!-- Specify the library to use. 'resttemplate' is great for traditional Spring Boot.
+                                 You could also use 'webclient' for reactive applications. -->
+                            <library>resttemplate</library>
+
+                            <!-- Configure the package names for the generated classes -->
+                            <apiPackage>piotrholda.portfoliomanager.stockapi.client.api</apiPackage>
+                            <modelPackage>piotrholda.portfoliomanager.stockapi.client.model</modelPackage>
+                            <invokerPackage>piotrholda.portfoliomanager.stockapi.client.invoker</invokerPackage>
+
+                            <!-- Additional configuration options -->
+                            <configOptions>
+                                <sourceFolder>src/main/java</sourceFolder>
+                                <!-- Use Java 8+ Date and Time APIs -->
+                                <dateLibrary>java8</dateLibrary>
+                                <!-- Set to true if you are using Java 8 -->
+                                <java8>true</java8>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
