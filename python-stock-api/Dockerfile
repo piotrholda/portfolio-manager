@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 5000
 
 # Run app.py when the container launches using a production server
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "app:app"]
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "5000"]

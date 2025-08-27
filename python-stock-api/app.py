@@ -1,30 +1,31 @@
-from flask import Flask, jsonify, request
+from fastapi import FastAPI, HTTPException, Query
 from stockdex import Ticker
 import pandas as pd
 
-app = Flask(__name__)
+app = FastAPI(
+    title="Stock Data API",
+    description="An API to fetch dividend and split data for stock tickers.",
+    version="1.0.0"
+)
 
-@app.route('/api/stock-data', methods=['GET'])
-def get_stock_data():
-    ticker_symbol = request.args.get('ticker')
-    if not ticker_symbol:
-        return jsonify({"error": "Ticker symbol is required"}), 400
+@app.get("/api/stock-data")
+async def get_stock_data(ticker: str = Query(..., description="The stock ticker symbol (e.g., AAPL)")):
+    """
+    Retrieves historical dividend and stock split data from Digrin.
+    """
+    if not ticker:
+        raise HTTPException(status_code=400, detail="Ticker symbol is required")
 
     try:
-        ticker = Ticker(ticker=ticker_symbol)
+        stock_ticker = Ticker(ticker=ticker)
+        dividends = stock_ticker.digrin_dividend.to_dict(orient='records')
+        splits = stock_ticker.digrin_stock_splits.to_dict(orient='records')
 
-        # Convert DataFrames to dictionary records
-        dividends = ticker.digrin_dividend.to_dict(orient='records')
-        splits = ticker.digrin_stock_splits.to_dict(orient='records')
-
-        return jsonify({
-            "ticker": ticker_symbol,
+        return {
+            "ticker": ticker,
             "dividends": dividends,
             "splits": splits
-        })
+        }
 
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+        raise HTTPException(status_code=500, detail=str(e))
