@@ -3,10 +3,7 @@ package piotrholda.portfoliomanager.corporateaction.out.persistence;
 import lombok.*;
 import piotrholda.portfoliomanager.corporateaction.CorporateActionType;
 
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -27,8 +24,10 @@ class CorporateActionEntity {
     private LocalDate exDividendDate;
     private LocalDate payableDate;
     private LocalDate splitDate;
+    @Column(precision = 19, scale = 12)
     private BigDecimal dividendAmount;
     private String dividendCurrency;
+    @Column(precision = 19, scale = 12)
     private BigDecimal splitRatio;
 
     @Override

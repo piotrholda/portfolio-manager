@@ -26,7 +26,7 @@ public class Dividend implements CorporateAction {
 
     @Override
     public BigDecimal getRatio() {
-        return getRatio();
+        return null;
     }
 
     @Override

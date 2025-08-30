@@ -2,6 +2,7 @@ package piotrholda.portfoliomanager.quotation.persistence;
 
 import lombok.*;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import java.math.BigDecimal;
@@ -21,6 +22,7 @@ class QuotationEntity {
     private String exchangeCode;
     private String currencyCode;
     private LocalDate date;
+    @Column(precision = 19, scale = 12)
     private BigDecimal closePrice;
 
     @Override
