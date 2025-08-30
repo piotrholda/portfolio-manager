@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import piotrholda.portfoliomanager.Ticker;
 import piotrholda.portfoliomanager.strategy.Quotation;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -31,7 +32,7 @@ class ImportQuotationUseCase implements ImportQuotation {
             Quotation quotation = new Quotation();
             quotation.setTicker(ticker);
             quotation.setDate(LocalDate.parse(dateString));
-            quotation.setClosePrice(Double.valueOf(dailyQuote.getClose()));
+            quotation.setClosePrice(new BigDecimal(dailyQuote.getClose()));
             quotations.add(quotation);
         }
         return new ArrayList<>(quotations);

@@ -4,7 +4,6 @@ import lombok.Data;
 import piotrholda.portfoliomanager.strategy.DualEquityMomentumParams;
 
 import java.util.Collection;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 

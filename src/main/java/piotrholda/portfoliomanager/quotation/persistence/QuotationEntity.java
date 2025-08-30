@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Getter
@@ -20,7 +21,7 @@ class QuotationEntity {
     private String exchangeCode;
     private String currencyCode;
     private LocalDate date;
-    private Double closePrice;
+    private BigDecimal closePrice;
 
     @Override
     public int hashCode() {

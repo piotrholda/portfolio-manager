@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static piotrholda.portfoliomanager.infrastructure.Math.OUTPUT_CONTEXT;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/v1/strategy")
@@ -62,7 +64,7 @@ class StrategyController {
                             .findFirst()
                             .orElse(null);
                     if (quotationForDate != null) {
-                        csvContent.append(quotationForDate.getClosePrice()).append(",");
+                        csvContent.append(quotationForDate.getClosePrice().setScale(OUTPUT_CONTEXT.getPrecision(), OUTPUT_CONTEXT.getRoundingMode())).append(",");
                     } else {
                         csvContent.append(",");
                     }
@@ -74,8 +76,8 @@ class StrategyController {
         HttpHeaders headers = new HttpHeaders();
         // append current date and time to file name
         String currentDateTime = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME).replace(":", "-").replace(".", "_");
-        String fileName = "DualEquityMomentum_" + currentDateTime +".csv";
-        headers.add("Content-Disposition", "attachment; filename="+fileName);
+        String fileName = "DualEquityMomentum_" + currentDateTime + ".csv";
+        headers.add("Content-Disposition", "attachment; filename=" + fileName);
         headers.add("Content-Type", "text/csv");
 
         return ResponseEntity.ok()

@@ -2,10 +2,14 @@ package piotrholda.portfoliomanager.strategy;
 
 import lombok.Data;
 import piotrholda.portfoliomanager.Ticker;
+import piotrholda.portfoliomanager.infrastructure.Math;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
 import java.util.*;
+
+import static piotrholda.portfoliomanager.infrastructure.Math.MATH_CONTEXT;
 
 @Data
 class DualEquityMomentum implements Strategy {
@@ -32,20 +36,20 @@ class DualEquityMomentum implements Strategy {
         for (LocalDate checkDate: checkDates) {
             LocalDate lookBackDate = checkDate.minusMonths(lookBackPeriod);
             Ticker candidate = null;
-            double candidateProfitPercent = Double.NEGATIVE_INFINITY;
+            BigDecimal candidateProfitPercent = BigDecimal.valueOf(Long.MIN_VALUE, MATH_CONTEXT.getPrecision());
             for (Ticker ticker : riskOn) {
                 Quotation currentQuotation = findQuotation(checkDate, dates, quotations.get(ticker));
                 Quotation lookBackQuotation = findQuotation(lookBackDate, dates, quotations.get(ticker));
-                double profitPercent = currentQuotation.profitPercent(lookBackQuotation);
-                if (profitPercent > candidateProfitPercent) {
+                BigDecimal profitPercent = currentQuotation.profitPercent(lookBackQuotation);
+                if (profitPercent.compareTo(candidateProfitPercent) > 0) {
                     candidate = ticker;
                     candidateProfitPercent = profitPercent;
                 }
             }
             Quotation currentRiskFreeQuotation = findQuotation(checkDate, dates, quotations.get(riskFree));
             Quotation lookBackRiskFreeQuotation = findQuotation(lookBackDate, dates, quotations.get(riskFree));
-            double riskFreeProfitPercent = currentRiskFreeQuotation.profitPercent(lookBackRiskFreeQuotation);
-            if (riskFreeProfitPercent > candidateProfitPercent) {
+            BigDecimal riskFreeProfitPercent = currentRiskFreeQuotation.profitPercent(lookBackRiskFreeQuotation);
+            if (riskFreeProfitPercent.compareTo(candidateProfitPercent) > 0) {
                 candidate = riskFree;
                 LocalDate riskOffLookBackDate = checkDate.minusMonths(riskOffLookBackPeriod);
                 lookBackRiskFreeQuotation = findQuotation(riskOffLookBackDate, dates, quotations.get(riskFree));
@@ -53,8 +57,8 @@ class DualEquityMomentum implements Strategy {
                 for (Ticker ticker : riskOff) {
                     Quotation currentQuotation = findQuotation(checkDate, dates, quotations.get(ticker));
                     Quotation lookBackQuotation = findQuotation(riskOffLookBackDate, dates, quotations.get(ticker));
-                    double profitPercent = currentQuotation.profitPercent(lookBackQuotation);
-                    if (profitPercent > candidateProfitPercent) {
+                    BigDecimal profitPercent = currentQuotation.profitPercent(lookBackQuotation);
+                    if (profitPercent.compareTo(candidateProfitPercent) > 0) {
                         candidate = ticker;
                         candidateProfitPercent = profitPercent;
                     }

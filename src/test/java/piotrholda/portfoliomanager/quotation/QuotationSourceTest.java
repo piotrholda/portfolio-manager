@@ -9,6 +9,7 @@ import piotrholda.portfoliomanager.Ticker;
 import piotrholda.portfoliomanager.strategy.GetQuotations;
 import piotrholda.portfoliomanager.strategy.Quotation;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -28,7 +29,7 @@ class QuotationSourceTest {
         Quotation quotation = new Quotation();
         quotation.setTicker(ticker);
         quotation.setDate(LocalDate.now());
-        quotation.setClosePrice(123.45);
+        quotation.setClosePrice(BigDecimal.valueOf(123.45));
 
         // when
         var quotations = getQuotations.getQuotations(ticker);
