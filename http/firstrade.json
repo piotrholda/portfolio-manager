@@ -7,6 +7,7 @@
   },
   "lookBackPeriod": 12,
   "riskOffLookBackPeriod": 3,
+  "skipMonths": 1,
   "riskOn": [
     {
       "code": "SPY",
@@ -15,11 +16,6 @@
     },
     {
       "code": "VEU",
-      "exchangeCode": "NYSE",
-      "currencyCode": "USD"
-    },
-    {
-      "code": "CWI",
       "exchangeCode": "NYSE",
       "currencyCode": "USD"
     }
@@ -32,11 +28,6 @@
   "riskOff": [
     {
       "code": "AGG",
-      "exchangeCode": "NYSE",
-      "currencyCode": "USD"
-    },
-    {
-      "code": "BND",
       "exchangeCode": "NYSE",
       "currencyCode": "USD"
     }

@@ -22,6 +22,7 @@ class DualEquityMomentum implements Strategy {
     private Collection<Ticker> riskOn;
     private Ticker riskFree;
     private Collection<Ticker> riskOff;
+    private int skipMonths;
 
     private Map<Ticker, List<Quotation>> quotations = new HashMap<>();
     private Map<Ticker, List<CorporateAction>> corporateActions = new HashMap<>();
@@ -66,7 +67,10 @@ class DualEquityMomentum implements Strategy {
                     }
                 }
             }
-            transactions.add(new Transaction(findNextDate(checkDate, dates), TransactionType.BUY, candidate));
+            LocalDate nextDate = findNextDate(checkDate, dates);
+            if (Objects.nonNull(nextDate)) {
+                transactions.add(new Transaction(nextDate, TransactionType.BUY, candidate));
+            }
         }
         transactions = removeRedundantTransactions(transactions);
     }
@@ -117,7 +121,7 @@ class DualEquityMomentum implements Strategy {
         while (lo <= hi) {                   // classical binary-search – O(log n)
             int mid = (lo + hi) >>> 1;
             LocalDate midVal = dates.get(mid);
-            if (midVal.compareTo(checkDate) > 0) {
+            if (midVal.compareTo(checkDate.plusMonths(skipMonths)) > 0) {
                 candidate = midVal;          // midVal ≥ checkDate ⇒ viable result
                 hi = mid - 1;                // look further to the left
             } else {

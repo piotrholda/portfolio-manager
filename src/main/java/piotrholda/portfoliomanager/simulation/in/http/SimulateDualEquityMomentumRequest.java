@@ -16,6 +16,7 @@ class SimulateDualEquityMomentumRequest {
     private Collection<SimulateRequestTicker> riskOn;
     private SimulateRequestTicker riskFree;
     private Collection<SimulateRequestTicker> riskOff;
+    private int skipMonths;
 
     DualEquityMomentumParams toParams() {
         DualEquityMomentumParams params = new DualEquityMomentumParams();
@@ -26,6 +27,7 @@ class SimulateDualEquityMomentumRequest {
         params.setRiskOn(riskOn.stream().map(SimulateRequestTicker::toTicker).collect(toList()));
         params.setRiskFree(riskFree.toTicker());
         params.setRiskOff(riskOff.stream().map(SimulateRequestTicker::toTicker).collect(toList()));
+        params.setSkipMonths(skipMonths);
         return params;
     }
 }

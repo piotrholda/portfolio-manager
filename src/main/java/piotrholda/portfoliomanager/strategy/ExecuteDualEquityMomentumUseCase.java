@@ -25,6 +25,7 @@ class ExecuteDualEquityMomentumUseCase implements ExecuteDualEquityMomentum {
         strategy.setRiskOn(params.getRiskOn());
         strategy.setRiskFree(params.getRiskFree());
         strategy.setRiskOff(params.getRiskOff());
+        strategy.setSkipMonths(params.getSkipMonths());
 
         List<Quotation> benchmarkQuotations = getQuotations.getQuotations(strategy.getBenchmark());
         List<CorporateAction> benchmarkCorporateActions = getCorporateActions.get(strategy.getBenchmark());

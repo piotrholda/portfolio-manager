@@ -14,4 +14,5 @@ public class DualEquityMomentumParams {
     private Collection<Ticker> riskOn;
     private Ticker riskFree;
     private Collection<Ticker> riskOff;
+    private int skipMonths;
 }
