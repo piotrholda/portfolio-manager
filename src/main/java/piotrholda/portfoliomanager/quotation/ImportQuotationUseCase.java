@@ -18,7 +18,7 @@ class ImportQuotationUseCase implements ImportQuotation {
 
     @Override
     public void importQuotations(String code) {
-        Ticker ticker = new Ticker(code, "NYSE", "USD");
+        Ticker ticker = Ticker.builder().code(code).exchangeCode( "NYSE").currencyCode( "USD").build();
         List<Quotation> quotations = getQuotations(ticker);
         saveQuotations.save(quotations);
     }
@@ -29,10 +29,7 @@ class ImportQuotationUseCase implements ImportQuotation {
         Map<String, DailyQuote> dailyTimeSeries = response.getDailyTimeSeries();
         for (String dateString : dailyTimeSeries.keySet()) {
             DailyQuote dailyQuote = dailyTimeSeries.get(dateString);
-            Quotation quotation = new Quotation();
-            quotation.setTicker(ticker);
-            quotation.setDate(LocalDate.parse(dateString));
-            quotation.setClosePrice(new BigDecimal(dailyQuote.getClose()));
+            Quotation quotation = new Quotation(ticker, LocalDate.parse(dateString), new BigDecimal(dailyQuote.getClose()));
             quotations.add(quotation);
         }
         return new ArrayList<>(quotations);

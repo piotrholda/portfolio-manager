@@ -25,11 +25,11 @@ class SecurityTest {
         CreateSecurityCommand CreateSecurityCommand = new CreateSecurityCommand(securityId,
                 SecurityType.ETF,
                 "Vanguard FTSE Emerging Markets UCITS ETF USD",
-                new Ticker("VDEM", "LON", "USD"));
+                Ticker.builder().code("VDEM").exchangeCode("LON").currencyCode("USD").build());
         SecurityCreatedEvent securityCreatedEvent = new SecurityCreatedEvent(securityId,
                 SecurityType.ETF,
                 "Vanguard FTSE Emerging Markets UCITS ETF USD",
-                new Ticker("VDEM", "LON", "USD"));
+                Ticker.builder().code("VDEM").exchangeCode("LON").currencyCode("USD").build());
 
         testFixture.givenNoPriorActivity()
                 .when(CreateSecurityCommand)

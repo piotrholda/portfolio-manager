@@ -13,6 +13,7 @@ import piotrholda.portfoliomanager.Ticker;
 import piotrholda.portfoliomanager.strategy.ExecuteDualEquityMomentum;
 import piotrholda.portfoliomanager.strategy.Quotation;
 import piotrholda.portfoliomanager.strategy.Strategy;
+import piotrholda.portfoliomanager.strategy.Transaction;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -20,6 +21,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static piotrholda.portfoliomanager.infrastructure.Math.OUTPUT_CONTEXT;
@@ -37,6 +39,8 @@ class StrategyController {
     public ResponseEntity<String> dualEquityMomentum(@RequestBody DualEquityMomentumRequest request) {
         Strategy strategy = executeDualEquityMomentum.execute(request.toParams());
         Map<Ticker, List<Quotation>> quotations = strategy.getQuotations();
+        List<Transaction> transactions = strategy.getTransactions();
+        Optional<Transaction> previousTransaction = Optional.empty();
         List<Ticker> tickers = new ArrayList<>(quotations.keySet());
 
         StringBuilder csvContent = new StringBuilder();
@@ -45,6 +49,7 @@ class StrategyController {
         for (Ticker ticker : tickers) {
             csvContent.append(ticker.getCode()).append(",");
         }
+        csvContent.append("Transaction");
         csvContent.append("\n");
 
         List<LocalDate> dates = quotations.values().stream()
@@ -70,6 +75,11 @@ class StrategyController {
                     }
                 }
             }
+            Optional<Transaction> transactionToPrint = getTransactionToPrint(previousTransaction, findTransaction(date, transactions));
+            if (transactionToPrint.isPresent()) {
+                previousTransaction = transactionToPrint;
+                csvContent.append(transactionToPrint.get().getTicker().getCode());
+            }
             csvContent.append("\n");
         }
 
@@ -83,5 +93,20 @@ class StrategyController {
         return ResponseEntity.ok()
                 .headers(headers)
                 .body(csvContent.toString());
+    }
+
+    private Optional<Transaction> getTransactionToPrint(Optional<Transaction> previousTransaction, Optional<Transaction> currentTransaction) {
+        if (currentTransaction.isPresent()) {
+            if (previousTransaction.isEmpty() || !previousTransaction.get().getTicker().getCode().equals(currentTransaction.get().getTicker().getCode())) {
+                return currentTransaction;
+            }
+        }
+        return Optional.empty();
+    }
+
+    private Optional<Transaction> findTransaction(LocalDate date, List<Transaction> transactions) {
+        return transactions.stream()
+                .filter(t -> t.getDate().isEqual(date))
+                .findFirst();
     }
 }

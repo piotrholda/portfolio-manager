@@ -1,23 +1,25 @@
 package piotrholda.portfoliomanager;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Builder;
+import lombok.Value;
+import lombok.extern.jackson.Jacksonized;
 
 import javax.persistence.Transient;
 import java.util.Optional;
 
 import static java.util.Objects.isNull;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
+@Value
+@Jacksonized
+@Builder
 public class Ticker {
 
-    private String code;
-    private String exchangeCode;
-    private String currencyCode;
+    String code;
+    String exchangeCode;
+    String currencyCode;
 
     @Transient
     @JsonIgnore

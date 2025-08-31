@@ -3,10 +3,13 @@ package piotrholda.portfoliomanager.quotation.persistence;
 import piotrholda.portfoliomanager.Ticker;
 import piotrholda.portfoliomanager.strategy.Quotation;
 
+import java.util.UUID;
+
 class QuotationMapper {
 
     static QuotationEntity toEntity(Quotation quotation) {
         QuotationEntity entity = new QuotationEntity();
+        entity.setQuotationId(UUID.randomUUID().toString());
         entity.setCode(quotation.getTicker().getCode());
         entity.setExchangeCode(quotation.getTicker().getExchangeCode());
         entity.setCurrencyCode(quotation.getTicker().getCurrencyCode());
@@ -16,10 +19,9 @@ class QuotationMapper {
     }
 
     static Quotation toDomain(QuotationEntity entity) {
-        Quotation quotation = new Quotation();
-        quotation.setTicker(new Ticker(entity.getCode(), entity.getExchangeCode(), entity.getCurrencyCode()));
-                quotation.setDate(entity.getDate());
-                quotation.setClosePrice(entity.getClosePrice());
-        return quotation;
+        return new Quotation(
+                Ticker.builder().code(entity.getCode()).exchangeCode(entity.getExchangeCode()).currencyCode(entity.getCurrencyCode()).build(),
+                entity.getDate(),
+                entity.getClosePrice());
     }
 }

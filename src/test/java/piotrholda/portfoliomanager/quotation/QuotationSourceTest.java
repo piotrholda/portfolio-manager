@@ -7,10 +7,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import piotrholda.portfoliomanager.Ticker;
 import piotrholda.portfoliomanager.strategy.GetQuotations;
-import piotrholda.portfoliomanager.strategy.Quotation;
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -25,11 +21,7 @@ class QuotationSourceTest {
     @Test
     void shouldGetQuotations() {
         // given
-        Ticker ticker = new Ticker("VT", "NYSE", "USD");
-        Quotation quotation = new Quotation();
-        quotation.setTicker(ticker);
-        quotation.setDate(LocalDate.now());
-        quotation.setClosePrice(BigDecimal.valueOf(123.45));
+        Ticker ticker = Ticker.builder().code("VT").exchangeCode("NYSE").currencyCode("USD").build();
 
         // when
         var quotations = getQuotations.getQuotations(ticker);

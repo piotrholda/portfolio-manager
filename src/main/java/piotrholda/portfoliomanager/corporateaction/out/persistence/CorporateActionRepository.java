@@ -4,12 +4,15 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import piotrholda.portfoliomanager.corporateaction.CorporateActionType;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.Optional;
 
 public interface CorporateActionRepository extends JpaRepository<CorporateActionEntity, String> {
     Optional<CorporateActionEntity> findByTypeAndCodeAndExchangeCodeAndCurrencyCodeAndExDividendDate(CorporateActionType type, String code, String exchangeCode, String currencyCode, LocalDate exDividendDate);
 
     Optional<CorporateActionEntity> findByTypeAndCodeAndExchangeCodeAndCurrencyCodeAndSplitDate(CorporateActionType type, String code, String exchangeCode, String currencyCode, LocalDate splitDate);
+
+    Collection<CorporateActionEntity> findAllByCodeAndExchangeCodeAndCurrencyCode(String code, String exchangeCode, String currencyCode);
 
     default Optional<CorporateActionEntity> findDividend(String code, String exchangeCode, String currencyCode, LocalDate exDividendDate) {
         return findByTypeAndCodeAndExchangeCodeAndCurrencyCodeAndExDividendDate(CorporateActionType.DIVIDEND, code, exchangeCode, currencyCode, exDividendDate);

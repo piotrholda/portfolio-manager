@@ -1,6 +1,7 @@
 package piotrholda.portfoliomanager.strategy;
 
 import lombok.Data;
+import lombok.Value;
 import piotrholda.portfoliomanager.Ticker;
 
 import java.math.BigDecimal;
@@ -8,13 +9,11 @@ import java.time.LocalDate;
 
 import static piotrholda.portfoliomanager.infrastructure.Math.MATH_CONTEXT;
 
-@Data
+@Value
 public class Quotation implements Comparable<Quotation> {
-    private Ticker ticker;
-    private LocalDate date;
-    private BigDecimal closePrice;
-    private BigDecimal adjustedClosePrice;
-
+     Ticker ticker;
+     LocalDate date;
+     BigDecimal closePrice;
 
     BigDecimal profitPercent(Quotation previousQuotation) {
         if (previousQuotation == null || previousQuotation.getClosePrice() == null || this.getClosePrice() == null) {
@@ -27,7 +26,7 @@ public class Quotation implements Comparable<Quotation> {
     }
 
     @Override
-    public int compareTo(Quotation o) {
-        return date.compareTo(o.getDate());
+    public int compareTo(Quotation other) {
+        return date.compareTo(other.getDate());
     }
 }

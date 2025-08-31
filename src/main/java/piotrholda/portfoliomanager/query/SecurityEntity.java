@@ -51,7 +51,7 @@ public class SecurityEntity implements Serializable {
     }
 
     SecurityResponseData toResponseData() {
-        var ticker = new Ticker(getCode(), getExchangeCode(), getCurrencyCode());
+        var ticker = Ticker.builder().code(getCode()).exchangeCode(getExchangeCode()).currencyCode(getCurrencyCode()).build();
         return new SecurityResponseData(getSecurityId(), getType(), getName(), ticker);
     }
 

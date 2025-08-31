@@ -5,7 +5,7 @@ import piotrholda.portfoliomanager.Ticker;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-public interface CorporateAction {
+public interface CorporateAction extends Comparable<CorporateAction> {
     CorporateActionType getType();
     Ticker getTicker();
     LocalDate getDate();
@@ -14,4 +14,9 @@ public interface CorporateAction {
     BigDecimal getRatio();
 
     void accept(CorporateActionVisitor visitor);
+
+    @Override
+    default int compareTo(CorporateAction other) {
+        return getDate().compareTo(other.getDate());
+    }
 }

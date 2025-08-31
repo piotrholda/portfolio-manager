@@ -25,13 +25,7 @@ class SaveQuotationsUseCase implements SaveQuotations {
                     quotation.getDate()
             );
             if (quotationEntity.isEmpty()) {
-                QuotationEntity entityToSave = new QuotationEntity();
-                entityToSave.setQuotationId(UUID.randomUUID().toString());
-                entityToSave.setCode(quotation.getTicker().getCode());
-                entityToSave.setExchangeCode(quotation.getTicker().getExchangeCode());
-                entityToSave.setCurrencyCode(quotation.getTicker().getCurrencyCode());
-                entityToSave.setDate(quotation.getDate());
-                entityToSave.setClosePrice(quotation.getClosePrice());
+                QuotationEntity entityToSave = QuotationMapper.toEntity(quotation);
                 repository.save(entityToSave);
             } else {
                 QuotationEntity entityToUpdate = quotationEntity.get();

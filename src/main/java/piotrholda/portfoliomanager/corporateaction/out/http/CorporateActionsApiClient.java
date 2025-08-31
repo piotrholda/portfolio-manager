@@ -30,7 +30,7 @@ class CorporateActionsApiClient implements FetchCorporateActions {
     public Collection<CorporateAction> get(String code) {
         StockDataResponse stockData = getStockData(code);
         List<CorporateAction> corporateActions = new ArrayList<>();
-        Ticker ticker = new Ticker(code, "NYSE", "USD");
+        Ticker ticker = Ticker.builder().code(code).exchangeCode("NYSE").currencyCode("USD").build();
         List<Dividend> dividends = stockData.getDividends();
         for (Dividend dividend : dividends) {
             corporateActions.add(DividendMapper.toDomain(ticker, dividend));

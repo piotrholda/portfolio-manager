@@ -10,6 +10,6 @@ class StrategyRequestTicker {
     private String currencyCode;
 
     Ticker toTicker() {
-        return new Ticker(code, exchangeCode, currencyCode);
+        return Ticker.builder().code(code).exchangeCode( exchangeCode).currencyCode( currencyCode).build();
     }
 }

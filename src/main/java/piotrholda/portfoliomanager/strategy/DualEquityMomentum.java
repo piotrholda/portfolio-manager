@@ -2,6 +2,7 @@ package piotrholda.portfoliomanager.strategy;
 
 import lombok.Data;
 import piotrholda.portfoliomanager.Ticker;
+import piotrholda.portfoliomanager.corporateaction.CorporateAction;
 import piotrholda.portfoliomanager.infrastructure.Math;
 
 import java.math.BigDecimal;
@@ -23,6 +24,7 @@ class DualEquityMomentum implements Strategy {
     private Collection<Ticker> riskOff;
 
     private Map<Ticker, List<Quotation>> quotations = new HashMap<>();
+    private Map<Ticker, List<CorporateAction>> corporateActions = new HashMap<>();
 
     private List<Transaction> transactions;
 
@@ -129,7 +131,6 @@ class DualEquityMomentum implements Strategy {
         Set<LocalDate> dates = new TreeSet<>();
         for (List<Quotation> quotationList : quotations.values()) {
             if (!quotationList.isEmpty()) {
-                LocalDate lastDate = quotationList.get(quotationList.size() - 1).getDate();
                 for (Quotation quotation : quotationList) {
                     LocalDate date = quotation.getDate();
                     if (!date.isBefore(startDate) && !date.isAfter(endDate)) {
