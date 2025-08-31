@@ -68,6 +68,21 @@ class DualEquityMomentum implements Strategy {
             }
             transactions.add(new Transaction(findNextDate(checkDate, dates), TransactionType.BUY, candidate));
         }
+        transactions = removeRedundantTransactions(transactions);
+    }
+
+    List<Transaction> removeRedundantTransactions(List<Transaction> transactions) {
+        List<Transaction> result = new ArrayList<>();
+        for (Transaction transaction : transactions) {
+            Optional<Transaction> previousTransaction = transactions.stream()
+                    .filter(t -> t.getDate().isBefore(transaction.getDate()))
+                    .reduce((first, second) -> second);
+            if (previousTransaction.isPresent() && previousTransaction.get().getTicker().equals(transaction.getTicker())) {
+                continue;
+            }
+            result.add(transaction);
+        }
+        return result;
     }
 
     private Quotation findQuotation(LocalDate checkDate, List<LocalDate> dates, List<Quotation> quotations) {

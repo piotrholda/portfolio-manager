@@ -40,7 +40,6 @@ class StrategyController {
         Strategy strategy = executeDualEquityMomentum.execute(request.toParams());
         Map<Ticker, List<Quotation>> quotations = strategy.getQuotations();
         List<Transaction> transactions = strategy.getTransactions();
-        Optional<Transaction> previousTransaction = Optional.empty();
         List<Ticker> tickers = new ArrayList<>(quotations.keySet());
 
         StringBuilder csvContent = new StringBuilder();
@@ -75,9 +74,8 @@ class StrategyController {
                     }
                 }
             }
-            Optional<Transaction> transactionToPrint = getTransactionToPrint(previousTransaction, findTransaction(date, transactions));
+            Optional<Transaction> transactionToPrint =  findTransaction(date, transactions);
             if (transactionToPrint.isPresent()) {
-                previousTransaction = transactionToPrint;
                 csvContent.append(transactionToPrint.get().getTicker().getCode());
             }
             csvContent.append("\n");
@@ -93,15 +91,6 @@ class StrategyController {
         return ResponseEntity.ok()
                 .headers(headers)
                 .body(csvContent.toString());
-    }
-
-    private Optional<Transaction> getTransactionToPrint(Optional<Transaction> previousTransaction, Optional<Transaction> currentTransaction) {
-        if (currentTransaction.isPresent()) {
-            if (previousTransaction.isEmpty() || !previousTransaction.get().getTicker().getCode().equals(currentTransaction.get().getTicker().getCode())) {
-                return currentTransaction;
-            }
-        }
-        return Optional.empty();
     }
 
     private Optional<Transaction> findTransaction(LocalDate date, List<Transaction> transactions) {
