@@ -36,11 +36,6 @@
       "currencyCode": "USD"
     },
     {
-      "code": "SCHZ",
-      "exchangeCode": "NYSE",
-      "currencyCode": "USD"
-    },
-    {
       "code": "BND",
       "exchangeCode": "NYSE",
       "currencyCode": "USD"

@@ -2,60 +2,95 @@ package piotrholda.portfoliomanager.simulation;
 
 import lombok.Data;
 import piotrholda.portfoliomanager.Ticker;
+import piotrholda.portfoliomanager.infrastructure.Math;
 import piotrholda.portfoliomanager.strategy.Quotation;
 import piotrholda.portfoliomanager.strategy.Strategy;
 import piotrholda.portfoliomanager.strategy.Transaction;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.time.LocalDate;
+import java.util.*;
 
 @Data
-class Simulation {
+public class Simulation {
     private Strategy strategy;
 
-    private List<Quotation> unnormalisedResults;
+    private List<Quotation> unnormalisedResults = new ArrayList<>();
+    private Map<Ticker, List<Quotation>> quotations;
+    private List<Quotation> results = new ArrayList<>();
 
     void execute() {
-simulate();
+        simulate();
+        normalise();
     }
 
     private void simulate() {
-        BigDecimal capital = BigDecimal.valueOf(100);
-        List<Transaction> transactions = strategy.getTransactions().stream().sorted().collect(Collectors.toList());
+        BigDecimal capital = BigDecimal.valueOf(1000);
+        List<Transaction> transactions = strategy.getTransactions();
+        unnormalisedResults.add(new Quotation(transactions.get(0).getTicker(), transactions.get(0).getDate(), capital));
         for (Transaction transaction : transactions) {
             Optional<Transaction> nextTransaction = transactions.stream()
                     .filter(t -> t.getDate().isAfter(transaction.getDate()))
                     .findFirst();
-        }
-    }
-
-    List<Transaction> removeRedundantTransactions(List<Transaction> transactions) {
-        List<Transaction> result = new ArrayList<>();
-        for (Transaction transaction : transactions) {
-            Optional<Transaction> previousTransaction = transactions.stream()
-                    .filter(t -> t.getDate().isBefore(transaction.getDate()))
-                    .reduce((first, second) -> second);
-            if (previousTransaction.isPresent() && previousTransaction.get().getTicker().equals(transaction.getTicker())) {
-                continue;
+            List<Quotation> strategyQuotations = strategy.getQuotations().get(transaction.getTicker());
+            BigDecimal startCapital = new BigDecimal(capital.toString());
+            BigDecimal startClosePrice = strategyQuotations.stream()
+                    .filter(q -> !q.getDate().isAfter(transaction.getDate()))
+                    .map(Quotation::getClosePrice)
+                    .reduce((first, second) -> second)
+                    .orElseThrow();
+            for (Quotation quotation : strategyQuotations) {
+                if (quotation.getDate().isAfter(transaction.getDate()) && (nextTransaction.isEmpty() || !quotation.getDate().isAfter(nextTransaction.get().getDate()))) {
+                    BigDecimal closePrice = quotation.getClosePrice().multiply(startCapital).divide(startClosePrice, Math.MATH_CONTEXT);
+                    capital = closePrice;
+                    unnormalisedResults.add(new Quotation(quotation.getTicker(), quotation.getDate(), closePrice));
+                }
             }
-            result.add(transaction);
         }
-        return result;
     }
 
-    Map<Ticker, List<Quotation>> getQuotations() {
-        return Map.of();
-    }
-    List<Transaction> getTransactions() {
-        return List.of();
+    private void normalise() {
+        quotations = new HashMap<>();
+        for (Ticker ticker : strategy.getQuotations().keySet()) {
+            quotations.put(ticker, new ArrayList<>());
+        }
+        results = new ArrayList<>();
+        LocalDate firstDate = unnormalisedResults.get(0).getDate();
+        BigDecimal firstResultPrice = unnormalisedResults.get(0).getClosePrice();
+        Map<Ticker, BigDecimal> firstPrices = new HashMap<>();
+        for (Map.Entry<Ticker, List<Quotation>> entry : strategy.getQuotations().entrySet()) {
+            BigDecimal firstPrice = findPrice(entry.getValue(), firstDate);
+            firstPrices.put(entry.getKey(), firstPrice);
+        }
+        for (Quotation unnormalisedResult : unnormalisedResults) {
+            LocalDate date = unnormalisedResult.getDate();
+            BigDecimal price = unnormalisedResult.getClosePrice();
+            BigDecimal normalisedPrice = percentChange(price, firstResultPrice);
+            results.add(new Quotation(unnormalisedResult.getTicker(), date, normalisedPrice));
+            for (Map.Entry<Ticker, List<Quotation>> entry : strategy.getQuotations().entrySet()) {
+                Ticker ticker = entry.getKey();
+                BigDecimal firstPrice = firstPrices.get(ticker);
+                BigDecimal newPrice = findPrice(entry.getValue(), date);
+                BigDecimal normalisedNewPrice = percentChange(newPrice, firstPrice);
+                quotations.get(ticker).add(new Quotation(ticker, date, normalisedNewPrice));
+            }
+        }
     }
 
-    List<Quotation> getResults() {
-        return List.of();
+    private BigDecimal percentChange(BigDecimal newPrice, BigDecimal oldPrice) {
+        return newPrice.subtract(oldPrice)
+                .divide(oldPrice, Math.MATH_CONTEXT)
+                .multiply(BigDecimal.valueOf(100));
     }
 
+    private BigDecimal findPrice(List<Quotation> quotations, LocalDate date) {
+        return quotations.stream().filter(q -> !q.getDate().isAfter(date))
+                .map(Quotation::getClosePrice)
+                .reduce((first, second) -> second)
+                .orElseThrow();
+    }
+
+    public List<Transaction> getTransactions() {
+        return strategy.getTransactions();
+    }
 }
