@@ -1,7 +1,7 @@
 {
   "currencyCode": "USD",
   "benchmark": {
-    "code": "VT",
+    "code": "SPY",
     "exchangeCode": "NYSE",
     "currencyCode": "USD"
   },
@@ -9,7 +9,7 @@
   "riskOffLookBackPeriod": 3,
   "riskOn": [
     {
-      "code": "VOO",
+      "code": "SPY",
       "exchangeCode": "NYSE",
       "currencyCode": "USD"
     },
