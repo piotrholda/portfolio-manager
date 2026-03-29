@@ -5,11 +5,17 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RestController;
 import piotrholda.portfoliomanager.quotation.ImportQuotation;
+import piotrholda.portfoliomanager.strategy.GetQuotations;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -19,6 +25,15 @@ import piotrholda.portfoliomanager.quotation.ImportQuotation;
 public class QuotationController {
 
     private final ImportQuotation importQuotation;
+    private final GetQuotations getQuotations;
+
+    @GetMapping
+    @Operation(summary = "Get quotations")
+    public List<QuotationResponse> getQuotations(@ModelAttribute GetQuotationRequest request) {
+        return getQuotations.getQuotations(request.toTicker()).stream()
+                .map(QuotationResponseMapper::toResponse)
+                .collect(Collectors.toList());
+    }
 
     @PostMapping("/import")
     @Operation(summary = "Import quotations")

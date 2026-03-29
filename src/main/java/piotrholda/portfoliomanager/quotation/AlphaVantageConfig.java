@@ -7,10 +7,13 @@ import org.springframework.stereotype.Component;
 @Component
 class AlphaVantageConfig {
         private String apiKey;
+        private String baseUrl;
 
         // Getters and setters
         public String getApiKey() { return apiKey; }
-        public String getBaseUrl() {
-                return "https://www.alphavantage.co/query";
-        }
+        @SuppressWarnings("unused")
+        public void setApiKey(String apiKey) { this.apiKey = apiKey; }
+        public String getBaseUrl() { return baseUrl; }
+        @SuppressWarnings("unused")
+        public void setBaseUrl(String baseUrl) { this.baseUrl = baseUrl; }
 }
