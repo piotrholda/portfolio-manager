@@ -284,6 +284,8 @@
                             <modelPackage>piotrholda.portfoliomanager.stockapi.client.model</modelPackage>
                             <invokerPackage>piotrholda.portfoliomanager.stockapi.client.invoker</invokerPackage>
 
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
                             <!-- Additional configuration options -->
                             <configOptions>
                                 <sourceFolder>src/main/java</sourceFolder>
