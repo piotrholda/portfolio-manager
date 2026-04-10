@@ -1,16 +1,20 @@
 package piotrholda.portfoliomanager.query;
 
-
-import lombok.*;
-import piotrholda.portfoliomanager.SecurityCreatedEvent;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import piotrholda.portfoliomanager.SecurityType;
 import piotrholda.portfoliomanager.Ticker;
+import piotrholda.portfoliomanager.rest.SecurityRequestData;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import java.io.Serializable;
+import java.util.UUID;
 
 import static java.util.Objects.nonNull;
 
@@ -31,27 +35,31 @@ public class SecurityEntity implements Serializable {
     private String exchangeCode;
     private String currencyCode;
 
-    static SecurityEntity of(SecurityCreatedEvent event) {
-        var ticker = event.getGoogleTicker();
+    public static SecurityEntity of(UUID securityId, SecurityRequestData requestData) {
+        Ticker ticker = requestData.getGoogleTicker();
         if (nonNull(ticker)) {
             return SecurityEntity.builder()
-                    .securityId(event.getSecurityId().toString())
-                    .type(event.getType())
-                    .name(event.getName())
+                    .securityId(securityId.toString())
+                    .type(requestData.getType())
+                    .name(requestData.getName())
                     .code(ticker.getCode())
                     .exchangeCode(ticker.getExchangeCode())
                     .currencyCode(ticker.getCurrencyCode())
                     .build();
         }
         return SecurityEntity.builder()
-                .securityId(event.getSecurityId().toString())
-                .type(event.getType())
-                .name(event.getName())
+                .securityId(securityId.toString())
+                .type(requestData.getType())
+                .name(requestData.getName())
                 .build();
     }
 
-    SecurityResponseData toResponseData() {
-        var ticker = Ticker.builder().code(getCode()).exchangeCode(getExchangeCode()).currencyCode(getCurrencyCode()).build();
+    public SecurityResponseData toResponseData() {
+        Ticker ticker = Ticker.builder()
+                .code(getCode())
+                .exchangeCode(getExchangeCode())
+                .currencyCode(getCurrencyCode())
+                .build();
         return new SecurityResponseData(getSecurityId(), getType(), getName(), ticker);
     }
 
