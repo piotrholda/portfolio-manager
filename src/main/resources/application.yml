@@ -13,6 +13,7 @@ spring:
       enabled: true
       path: /v3/api-docs
 alphavantage:
+  base-url:  https://www.alphavantage.co/query
   api.key: ${ALPHAVANTAGE_API_KEY}
 stock-api:
   base-path: http://localhost:5000
