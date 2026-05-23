@@ -15,5 +15,8 @@ spring:
 alphavantage:
   base-url:  https://www.alphavantage.co/query
   api.key: ${ALPHAVANTAGE_API_KEY}
+stooq:
+  base-url: https://stooq.pl/q/d/l/
+  api-key: ${STOOQ_API_KEY:}
 stock-api:
   base-path: http://localhost:5000

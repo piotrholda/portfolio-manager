@@ -1,6 +1,8 @@
 package piotrholda.portfoliomanager.quotation;
 
+import piotrholda.portfoliomanager.Ticker;
+
 public interface ImportQuotation {
 
-    void importQuotations(String code);
+    void importQuotations(Ticker ticker);
 }

@@ -1,3 +1,5 @@
+dla tickerów z exchange code WSE chciałbym pobierać notowania z serwisu Stooq. Poniżej znajdziesz instrukcję, jak to zrobić.
+
 Pobieranie notowań polskich ETF-ów z serwisu Stooq można zrealizować za pomocą API:
 
 Przykład dla ETF-u Beta na GPW:

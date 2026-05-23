@@ -9,3 +9,5 @@ spring:
       ddl-auto: create-drop
 alphavantage:
   api-key: test-api-key
+stooq:
+  base-url: http://localhost:65535/q/d/l/

@@ -1,11 +1,13 @@
 package piotrholda.portfoliomanager.quotation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+@Slf4j
 @Service
 class AlphaVantageHistoricalService {
 
@@ -52,6 +54,7 @@ class AlphaVantageHistoricalService {
 
     private TimeSeriesResponse fetchTimeSeriesData(String url) {
         try {
+            log.info("Fetching historical quotations from Alpha Vantage: {}", url);
             ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
 
             if (response.getStatusCode() == HttpStatus.OK) {
@@ -62,10 +65,16 @@ class AlphaVantageHistoricalService {
                     throw new RuntimeException("API call frequency limit reached");
                 }
 
-                return objectMapper.readValue(responseBody, TimeSeriesResponse.class);
+                TimeSeriesResponse parsedResponse = objectMapper.readValue(responseBody, TimeSeriesResponse.class);
+                int recordCount = parsedResponse != null && parsedResponse.getDailyTimeSeries() != null
+                        ? parsedResponse.getDailyTimeSeries().size()
+                        : 0;
+                log.info("Alpha Vantage returned {} daily quotation records", recordCount);
+                return parsedResponse;
             }
 
         } catch (Exception e) {
+            log.error("Failed to fetch historical data from Alpha Vantage", e);
             throw new RuntimeException("Failed to fetch historical data", e);
         }
 

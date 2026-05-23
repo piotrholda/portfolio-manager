@@ -4,13 +4,15 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RestController;
+import piotrholda.portfoliomanager.quotation.ImportQuotationCsv;
 import piotrholda.portfoliomanager.quotation.ImportQuotation;
 import piotrholda.portfoliomanager.strategy.GetQuotations;
 
@@ -25,6 +27,7 @@ import java.util.stream.Collectors;
 public class QuotationController {
 
     private final ImportQuotation importQuotation;
+    private final ImportQuotationCsv importQuotationCsv;
     private final GetQuotations getQuotations;
 
     @GetMapping
@@ -39,11 +42,23 @@ public class QuotationController {
     @Operation(summary = "Import quotations")
     public ResponseEntity<ImportQuotationResponse> importQuotation(@RequestBody ImportQuotationRequest request) {
         try {
-            importQuotation.importQuotations(request.getCode());
+            importQuotation.importQuotations(request.toTicker());
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
             log.error("Error initiating quotation import: ", e);
             return ResponseEntity.status(500).body(new ImportQuotationResponse("Error initiating quotation import: " + e.getMessage()));
+        }
+    }
+
+    @PostMapping(value = "/import/csv", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "Import quotations from uploaded CSV")
+    public ResponseEntity<ImportQuotationResponse> importQuotationCsv(@ModelAttribute ImportQuotationCsvRequest request) {
+        try {
+            importQuotationCsv.importQuotations(request.toImportQuotationRequest().toTicker(), request.getFile());
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            log.error("Error importing quotations from CSV: ", e);
+            return ResponseEntity.status(500).body(new ImportQuotationResponse("Error importing quotations from CSV: " + e.getMessage()));
         }
     }
 }
