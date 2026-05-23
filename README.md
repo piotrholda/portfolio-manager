@@ -19,6 +19,9 @@ http://localhost:5000/openapi.json
 ## Python API ReDoc
 http://localhost:5000/redoc
 
+## H2 Console
+http://localhost:8080/h2-console
+
 ## Build process
 1. Build and run Docker Compose
 ```bash

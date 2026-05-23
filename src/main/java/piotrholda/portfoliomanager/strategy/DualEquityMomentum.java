@@ -89,12 +89,28 @@ class DualEquityMomentum implements Strategy {
         return result;
     }
 
-    private Quotation findQuotation(LocalDate checkDate, List<LocalDate> dates, List<Quotation> quotations) {
+    Quotation findQuotation(LocalDate checkDate, List<LocalDate> dates, List<Quotation> quotations) {
         LocalDate date = findDateOrPrevious(checkDate, dates);
-        return quotations.stream()
-                .filter(q -> q.getDate().equals(date))
-                .findFirst()
-                .orElseThrow(() -> new IllegalStateException("Quotation not found for date: " + date));
+        if (date == null || quotations == null || quotations.isEmpty()) {
+            throw new IllegalStateException("Quotation not found for date: " + checkDate);
+        }
+
+        Quotation candidate = null;
+        int lo = 0;
+        int hi = quotations.size() - 1;
+        while (lo <= hi) {
+            int mid = (lo + hi) >>> 1;
+            Quotation midQuotation = quotations.get(mid);
+            if (midQuotation.getDate().compareTo(date) <= 0) {
+                candidate = midQuotation;
+                lo = mid + 1;
+            } else {
+                hi = mid - 1;
+            }
+        }
+
+        return Optional.ofNullable(candidate)
+                .orElseThrow(() -> new IllegalStateException("Quotation not found for date: " + checkDate));
     }
 
     private LocalDate findDateOrPrevious(LocalDate checkDate, List<LocalDate> dates) {
