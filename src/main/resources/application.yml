@@ -1,5 +1,5 @@
 spring:
-  config.import: optional:file:.env[.properties]
+  config.import: optional:file:.env[.properties],optional:file:src/main/resources/alphavantage.env[.properties]
   jpa:
     open-in-view: false
   jmx:
@@ -14,7 +14,8 @@ spring:
       path: /v3/api-docs
 alphavantage:
   base-url:  https://www.alphavantage.co/query
-  api.key: ${ALPHAVANTAGE_API_KEY}
+  api-key: ${ALPHAVANTAGE_API_KEY:}
+  full-history-enabled: false
 stooq:
   base-url: https://stooq.pl/q/d/l/
   api-key: ${STOOQ_API_KEY:}

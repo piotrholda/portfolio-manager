@@ -25,6 +25,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -43,6 +44,7 @@ class QuotationControllerIntegrationTest {
     private static String stooqBaseUrl;
     private static final AtomicReference<String> requestedPath = new AtomicReference<>();
     private static final AtomicReference<String> requestedAuthority = new AtomicReference<>();
+    private static final AtomicInteger alphaVantageRequestCount = new AtomicInteger();
 
     @LocalServerPort
     private int port;
@@ -71,6 +73,7 @@ class QuotationControllerIntegrationTest {
     void shouldImportQuotationsAndExposeThemAsJson() {
         requestedPath.set(null);
         requestedAuthority.set(null);
+        alphaVantageRequestCount.set(0);
 
         ResponseEntity<Void> importResponse = restTemplate.postForEntity(
                 "http://localhost:" + port + "/v1/quotation/import",
@@ -83,8 +86,9 @@ class QuotationControllerIntegrationTest {
         assertNotNull(requestedPath.get());
         assertTrue(requestedPath.get().contains("function=TIME_SERIES_DAILY"));
         assertTrue(requestedPath.get().contains("symbol=VT"));
-        assertTrue(requestedPath.get().contains("outputsize=full"));
+        assertTrue(requestedPath.get().contains("outputsize=compact"));
         assertTrue(requestedPath.get().contains("apikey=test-api-key"));
+        assertEquals(1, alphaVantageRequestCount.get());
 
         ResponseEntity<String> quotationsResponse = restTemplate.getForEntity(
                 "http://localhost:" + port + "/v1/quotation?code=VT",
@@ -139,6 +143,23 @@ class QuotationControllerIntegrationTest {
     }
 
     @Test
+    void shouldReturnTooManyRequestsWhenAlphaVantageRateLimitIsReached() {
+        requestedPath.set(null);
+        requestedAuthority.set(null);
+        alphaVantageRequestCount.set(0);
+
+        ResponseEntity<String> importResponse = restTemplate.postForEntity(
+                "http://localhost:" + port + "/v1/quotation/import",
+                Map.of("code", "RATE_LIMIT", "exchangeCode", "NYSE", "currencyCode", "USD"),
+                String.class
+        );
+
+        assertEquals(HttpStatus.TOO_MANY_REQUESTS, importResponse.getStatusCode());
+        assertNotNull(importResponse.getBody());
+        assertTrue(importResponse.getBody().contains("Alpha Vantage rate limit reached"));
+    }
+
+    @Test
     void shouldImportQuotationsFromUploadedCsv() {
         byte[] csvBytes = ("Data,Otwarcie,Najwyzszy,Najnizszy,Zamkniecie,Wolumen\n"
                 + "2019-09-05,52.61,52.99,52.4,52.4,23930\n"
@@ -185,35 +206,47 @@ class QuotationControllerIntegrationTest {
     private static void handleAlphaVantageRequest(HttpExchange exchange) throws IOException {
         requestedAuthority.set("alphavantage");
         requestedPath.set(exchange.getRequestURI().toString());
-        String response = "{"
-                + "\"Meta Data\":{"
-                + "\"1. Information\":\"Daily Prices\","
-                + "\"2. Symbol\":\"VT\""
-                + "},"
-                + "\"Time Series (Daily)\":{"
-                + "\"2024-01-04\":{"
-                + "\"1. open\":\"103.0000\","
-                + "\"2. high\":\"104.0000\","
-                + "\"3. low\":\"102.0000\","
-                + "\"4. close\":\"103.500000000000\","
-                + "\"5. volume\":\"1000\""
-                + "},"
-                + "\"2024-01-03\":{"
-                + "\"1. open\":\"102.0000\","
-                + "\"2. high\":\"103.0000\","
-                + "\"3. low\":\"101.0000\","
-                + "\"4. close\":\"102.000000000000\","
-                + "\"5. volume\":\"900\""
-                + "},"
-                + "\"2024-01-02\":{"
-                + "\"1. open\":\"101.0000\","
-                + "\"2. high\":\"102.0000\","
-                + "\"3. low\":\"100.0000\","
-                + "\"4. close\":\"101.250000000000\","
-                + "\"5. volume\":\"800\""
-                + "}"
-                + "}"
-                + "}";
+        alphaVantageRequestCount.incrementAndGet();
+        String response;
+        if (requestedPath.get().contains("symbol=RATE_LIMIT")) {
+            response = "{"
+                    + "\"Information\":\"Thank you for using Alpha Vantage! Please consider spreading out your free API requests more sparingly (1 request per second). You may subscribe to any of the premium plans at https://www.alphavantage.co/premium/ to lift the free key rate limit (25 requests per day), raise the per-second burst limit, and instantly unlock all premium endpoints.\""
+                    + "}";
+        } else if (requestedPath.get().contains("outputsize=full")) {
+            response = "{"
+                    + "\"Information\":\"Thank you for using Alpha Vantage! The outputsize=full parameter value is a premium feature for the TIME_SERIES_DAILY endpoint.\""
+                    + "}";
+        } else {
+            response = "{"
+                    + "\"Meta Data\":{"
+                    + "\"1. Information\":\"Daily Prices\","
+                    + "\"2. Symbol\":\"VT\""
+                    + "},"
+                    + "\"Time Series (Daily)\":{"
+                    + "\"2024-01-04\":{"
+                    + "\"1. open\":\"103.0000\","
+                    + "\"2. high\":\"104.0000\","
+                    + "\"3. low\":\"102.0000\","
+                    + "\"4. close\":\"103.500000000000\","
+                    + "\"5. volume\":\"1000\""
+                    + "},"
+                    + "\"2024-01-03\":{"
+                    + "\"1. open\":\"102.0000\","
+                    + "\"2. high\":\"103.0000\","
+                    + "\"3. low\":\"101.0000\","
+                    + "\"4. close\":\"102.000000000000\","
+                    + "\"5. volume\":\"900\""
+                    + "},"
+                    + "\"2024-01-02\":{"
+                    + "\"1. open\":\"101.0000\","
+                    + "\"2. high\":\"102.0000\","
+                    + "\"3. low\":\"100.0000\","
+                    + "\"4. close\":\"101.250000000000\","
+                    + "\"5. volume\":\"800\""
+                    + "}"
+                    + "}"
+                    + "}";
+        }
         byte[] responseBytes = response.getBytes(StandardCharsets.UTF_8);
 
         exchange.getResponseHeaders().add("Content-Type", "application/json");

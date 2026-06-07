@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 class AlphaVantageConfig {
         private String apiKey;
         private String baseUrl;
+        private boolean fullHistoryEnabled;
 
         // Getters and setters
         public String getApiKey() { return apiKey; }
@@ -16,4 +17,7 @@ class AlphaVantageConfig {
         public String getBaseUrl() { return baseUrl; }
         @SuppressWarnings("unused")
         public void setBaseUrl(String baseUrl) { this.baseUrl = baseUrl; }
+        public boolean isFullHistoryEnabled() { return fullHistoryEnabled; }
+        @SuppressWarnings("unused")
+        public void setFullHistoryEnabled(boolean fullHistoryEnabled) { this.fullHistoryEnabled = fullHistoryEnabled; }
 }

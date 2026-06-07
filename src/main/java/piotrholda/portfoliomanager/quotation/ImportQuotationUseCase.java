@@ -16,6 +16,7 @@ import java.util.*;
 class ImportQuotationUseCase implements ImportQuotation {
 
     private final AlphaVantageHistoricalService historicalService;
+    private final AlphaVantageConfig alphaVantageConfig;
     private final StooqHistoricalService stooqHistoricalService;
     private final SaveQuotations saveQuotations;
 
@@ -42,7 +43,9 @@ class ImportQuotationUseCase implements ImportQuotation {
 
     private List<Quotation> getAlphaVantageQuotations(Ticker ticker) {
         Set<Quotation> quotations = new TreeSet<>();
-        TimeSeriesResponse response = historicalService.getDailyHistory(ticker.getCode(), true);
+        boolean fullHistoryEnabled = alphaVantageConfig.isFullHistoryEnabled();
+        log.info("Alpha Vantage full history enabled for ticker {}: {}", ticker.getCode(), fullHistoryEnabled);
+        TimeSeriesResponse response = historicalService.getDailyHistory(ticker.getCode(), fullHistoryEnabled);
         if (response == null || response.getDailyTimeSeries() == null) {
             log.warn("Alpha Vantage returned no daily quotations for code={}, exchangeCode={}",
                     ticker.getCode(), ticker.getExchangeCode());

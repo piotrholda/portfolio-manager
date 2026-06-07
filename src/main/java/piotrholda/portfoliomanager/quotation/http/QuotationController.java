@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import piotrholda.portfoliomanager.quotation.AlphaVantageRateLimitException;
 import piotrholda.portfoliomanager.quotation.ImportQuotationCsv;
 import piotrholda.portfoliomanager.quotation.ImportQuotation;
 import piotrholda.portfoliomanager.strategy.GetQuotations;
@@ -44,6 +45,10 @@ public class QuotationController {
         try {
             importQuotation.importQuotations(request.toTicker());
             return ResponseEntity.noContent().build();
+        } catch (AlphaVantageRateLimitException e) {
+            log.warn("Alpha Vantage rate limit while importing quotations: {}", e.getMessage());
+            return ResponseEntity.status(429).body(new ImportQuotationResponse(
+                    "Alpha Vantage rate limit reached. Wait and retry, or configure another quotation source."));
         } catch (Exception e) {
             log.error("Error initiating quotation import: ", e);
             return ResponseEntity.status(500).body(new ImportQuotationResponse("Error initiating quotation import: " + e.getMessage()));
