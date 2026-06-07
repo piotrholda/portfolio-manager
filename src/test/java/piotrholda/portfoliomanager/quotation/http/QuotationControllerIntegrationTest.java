@@ -143,6 +143,34 @@ class QuotationControllerIntegrationTest {
     }
 
     @Test
+    void shouldReturnEmptyQuotationsWhenAlphaVantageHasNoDailyTimeSeries() {
+        requestedPath.set(null);
+        requestedAuthority.set(null);
+        alphaVantageRequestCount.set(0);
+
+        ResponseEntity<Void> importResponse = restTemplate.postForEntity(
+                "http://localhost:" + port + "/v1/quotation/import",
+                Map.of("code", "EMPTY", "exchangeCode", "NYSE", "currencyCode", "USD"),
+                Void.class
+        );
+
+        assertEquals(HttpStatus.NO_CONTENT, importResponse.getStatusCode());
+        assertEquals("alphavantage", requestedAuthority.get());
+        assertNotNull(requestedPath.get());
+        assertTrue(requestedPath.get().contains("symbol=EMPTY"));
+        assertTrue(requestedPath.get().contains("outputsize=compact"));
+        assertEquals(1, alphaVantageRequestCount.get());
+
+        ResponseEntity<String> quotationsResponse = restTemplate.getForEntity(
+                "http://localhost:" + port + "/v1/quotation?code=EMPTY&exchangeCode=NYSE&currencyCode=USD",
+                String.class
+        );
+
+        assertEquals(HttpStatus.OK, quotationsResponse.getStatusCode());
+        assertEquals("[]", quotationsResponse.getBody());
+    }
+
+    @Test
     void shouldReturnTooManyRequestsWhenAlphaVantageRateLimitIsReached() {
         requestedPath.set(null);
         requestedAuthority.set(null);
@@ -208,7 +236,14 @@ class QuotationControllerIntegrationTest {
         requestedPath.set(exchange.getRequestURI().toString());
         alphaVantageRequestCount.incrementAndGet();
         String response;
-        if (requestedPath.get().contains("symbol=RATE_LIMIT")) {
+        if (requestedPath.get().contains("symbol=EMPTY")) {
+            response = "{"
+                    + "\"Meta Data\":{"
+                    + "\"1. Information\":\"Daily Prices\","
+                    + "\"2. Symbol\":\"EMPTY\""
+                    + "}"
+                    + "}";
+        } else if (requestedPath.get().contains("symbol=RATE_LIMIT")) {
             response = "{"
                     + "\"Information\":\"Thank you for using Alpha Vantage! Please consider spreading out your free API requests more sparingly (1 request per second). You may subscribe to any of the premium plans at https://www.alphavantage.co/premium/ to lift the free key rate limit (25 requests per day), raise the per-second burst limit, and instantly unlock all premium endpoints.\""
                     + "}";
