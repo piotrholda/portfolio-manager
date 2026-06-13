@@ -1,4 +1,4 @@
-package piotrholda.portfoliomanager.rest;
+package piotrholda.portfoliomanager.security;
 
 import lombok.Data;
 import piotrholda.portfoliomanager.SecurityType;

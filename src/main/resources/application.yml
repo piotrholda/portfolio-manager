@@ -12,6 +12,10 @@ spring:
     api-docs:
       enabled: true
       path: /v3/api-docs
+springdoc:
+  swagger-ui:
+    tags-sorter: alpha
+    operations-sorter: alpha
 alphavantage:
   base-url:  https://www.alphavantage.co/query
   api-key: ${ALPHAVANTAGE_API_KEY:}

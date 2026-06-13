@@ -1,4 +1,4 @@
-package piotrholda.portfoliomanager.rest;
+package piotrholda.portfoliomanager.security;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

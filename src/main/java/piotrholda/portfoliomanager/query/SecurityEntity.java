@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import piotrholda.portfoliomanager.SecurityType;
 import piotrholda.portfoliomanager.Ticker;
-import piotrholda.portfoliomanager.rest.SecurityRequestData;
+import piotrholda.portfoliomanager.security.SecurityRequestData;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;

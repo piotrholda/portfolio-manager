@@ -1,4 +1,4 @@
-package piotrholda.portfoliomanager.rest;
+package piotrholda.portfoliomanager.security;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,7 +18,7 @@ import java.util.UUID;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/v1/security")
-@Tag(name = "Security", description = "Security management API")
+@Tag(name = "1. Security", description = "Security management API")
 public class SecurityController {
 
     private final SecurityService securityService;

@@ -1,4 +1,4 @@
-package piotrholda.portfoliomanager.rest;
+package piotrholda.portfoliomanager.security;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -30,13 +30,17 @@ import static piotrholda.portfoliomanager.infrastructure.Math.OUTPUT_CONTEXT;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/v1/simulation")
-@Tag(name = "Simulation", description = "Simulation management API")
+@Tag(name = "5. Simulation", description = "Simulation management API")
 class SimulationController {
 
     private final SimulateDualEquityMomentum simulateDualEquityMomentum;
 
     @PostMapping(value = "/dualEquityMomentum", produces = "text/csv")
-    @Operation(summary = "Simulate Dual EquityMomentum strategy simulation")
+    @Operation(
+            summary = "Simulate Dual Equity Momentum portfolio performance",
+            description = "Runs the Dual Equity Momentum strategy and then simulates portfolio performance from the generated transactions. "
+                    + "The returned CSV includes adjusted input quotations, normalized simulation results, and buy transactions."
+    )
     public ResponseEntity<String> dualEquityMomentum(@RequestBody SimulateDualEquityMomentumRequest request) {
         Simulation simulation = simulateDualEquityMomentum.simulate(request.toParams());
         List<Quotation> results = simulation.getResults();

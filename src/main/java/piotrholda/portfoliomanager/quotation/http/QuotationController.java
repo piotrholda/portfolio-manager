@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/v1/quotation")
-@Tag(name = "Quotation", description = "Quotation management API")
+@Tag(name = "2. Quotation", description = "Quotation management API")
 public class QuotationController {
 
     private final ImportQuotation importQuotation;

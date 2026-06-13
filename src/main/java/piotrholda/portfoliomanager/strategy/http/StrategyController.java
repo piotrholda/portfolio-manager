@@ -29,13 +29,17 @@ import static piotrholda.portfoliomanager.infrastructure.Math.OUTPUT_CONTEXT;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/v1/strategy")
-@Tag(name = "Strategy", description = "Strategy management API")
+@Tag(name = "4. Strategy", description = "Strategy management API")
 class StrategyController {
 
     private final ExecuteDualEquityMomentum executeDualEquityMomentum;
 
     @PostMapping(value = "/dualEquityMomentum", produces = "text/csv")
-    @Operation(summary = "Execute Dual EquityMomentum strategy simulation")
+    @Operation(
+            summary = "Execute Dual Equity Momentum strategy",
+            description = "Runs the Dual Equity Momentum strategy and returns a CSV with adjusted input quotations and buy transactions. "
+                    + "This endpoint shows what the strategy selected on each decision date, but it does not calculate portfolio performance."
+    )
     public ResponseEntity<String> dualEquityMomentum(@RequestBody DualEquityMomentumRequest request) {
         Strategy strategy = executeDualEquityMomentum.execute(request.toParams());
         Map<Ticker, List<Quotation>> quotations = strategy.getQuotations();
