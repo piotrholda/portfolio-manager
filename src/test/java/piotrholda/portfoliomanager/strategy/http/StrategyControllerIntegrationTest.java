@@ -35,10 +35,10 @@ class StrategyControllerIntegrationTest {
 
     @Test
     void shouldExecuteDualEquityMomentumAndReturnCsv() {
-        importQuotations("STR_BENCH", "100", "101", "102", "103");
-        importQuotations("STR_RISK_FREE", "100", "100.5", "101", "101.5");
-        importQuotations("STR_RISK_ON", "100", "110", "120", "130");
-        importQuotations("STR_RISK_OFF", "100", "99", "98", "97");
+        importQuotations("STR_BENCH", "100", "101", "102", "103", "104");
+        importQuotations("STR_RISK_FREE", "100", "100.5", "101", "101.5", "102");
+        importQuotations("STR_RISK_ON", "100", "110", "120", "130", "140");
+        importQuotations("STR_RISK_OFF", "100", "99", "98", "97", "96");
 
         ResponseEntity<String> response = restTemplate.postForEntity(
                 "http://localhost:" + port + "/v1/strategy/dualEquityMomentum",
@@ -55,11 +55,12 @@ class StrategyControllerIntegrationTest {
         assertTrue(response.getBody().contains("STR_RISK_ON"));
         assertTrue(response.getBody().contains("STR_RISK_OFF"));
         List<Map<String, String>> csvRows = parseCsv(response.getBody());
-        assertEquals(4, csvRows.size());
-        assertCsvRow(csvRows.get(0), "2024-01-31", "100.00", "100.50", "110.00", "99.00", "");
-        assertCsvRow(csvRows.get(1), "2024-02-29", "101.00", "101.00", "120.00", "98.00", "");
-        assertCsvRow(csvRows.get(2), "2024-03-31", "102.00", "101.50", "130.00", "97.00", "STR_RISK_ON");
-        assertCsvRow(csvRows.get(3), "2024-04-30", "103.00", "102.00", "130.00", "96.00", "");
+        assertEquals(5, csvRows.size());
+        assertCsvRow(csvRows.get(0), "2023-12-31", "100.00", "100.00", "100.00", "100.00", "");
+        assertCsvRow(csvRows.get(1), "2024-01-31", "101.00", "100.50", "110.00", "99.00", "");
+        assertCsvRow(csvRows.get(2), "2024-02-29", "102.00", "101.00", "120.00", "98.00", "STR_RISK_ON");
+        assertCsvRow(csvRows.get(3), "2024-03-31", "103.00", "101.50", "130.00", "97.00", "");
+        assertCsvRow(csvRows.get(4), "2024-04-30", "104.00", "102.00", "140.00", "96.00", "");
     }
 
     private List<Map<String, String>> parseCsv(String csv) {
@@ -87,12 +88,13 @@ class StrategyControllerIntegrationTest {
         assertEquals(transaction, row.get("Transaction"));
     }
 
-    private void importQuotations(String code, String first, String second, String third, String fourth) {
+    private void importQuotations(String code, String first, String second, String third, String fourth, String fifth) {
         byte[] csvBytes = ("Data,Otwarcie,Najwyzszy,Najnizszy,Zamkniecie,Wolumen\n"
-                + "2024-01-31," + first + "," + first + "," + first + "," + first + ",1000\n"
-                + "2024-02-29," + second + "," + second + "," + second + "," + second + ",1000\n"
-                + "2024-03-31," + third + "," + third + "," + third + "," + third + ",1000\n"
-                + "2024-04-30," + fourth + "," + fourth + "," + fourth + "," + fourth + ",1000\n")
+                + "2023-12-31," + first + "," + first + "," + first + "," + first + ",1000\n"
+                + "2024-01-31," + second + "," + second + "," + second + "," + second + ",1000\n"
+                + "2024-02-29," + third + "," + third + "," + third + "," + third + ",1000\n"
+                + "2024-03-31," + fourth + "," + fourth + "," + fourth + "," + fourth + ",1000\n"
+                + "2024-04-30," + fifth + "," + fifth + "," + fifth + "," + fifth + ",1000\n")
                 .getBytes(StandardCharsets.UTF_8);
 
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
