@@ -3,6 +3,7 @@ import { Badge, Burger, Button, Paper } from '@mantine/core';
 import { NavLink, Route, Routes, useLocation } from 'react-router-dom';
 import { ArrowRight, ChartNoAxesCombined, CircleHelp, Database, FlaskConical, Layers3, LayoutDashboard, LineChart, PanelTop, Workflow } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
+import { InstrumentsPage } from './features/instruments/InstrumentsPage';
 
 const modules = [
   { path: '/simulations', name: 'Symulacje', icon: FlaskConical, description: 'Przestrzeń do porównywania wyników i analizy zachowania portfela w czasie.' },
@@ -36,10 +37,10 @@ function Overview() {
     <div className="module-grid">{modules.map(({ path, name, icon: Icon, description }, index) =>
       <NavLink className="module-card" to={path} key={path}>
         <div className="card-top"><span className="module-icon"><Icon size={22} strokeWidth={1.6} /></span><span className="module-number">0{index + 1}</span></div>
-        <h3>{name}</h3><p>{description}</p><div className="card-bottom"><span>W przygotowaniu</span><ArrowRight size={17} /></div>
+        <h3>{name}</h3><p>{description}</p><div className="card-bottom"><span>{path === '/instruments' ? 'Lista i dodawanie' : 'W przygotowaniu'}</span><ArrowRight size={17} /></div>
       </NavLink>,
     )}</div>
-    <div className="scope-note"><PanelTop size={18} /><p>To pierwsza wersja układu aplikacji. Moduły nie pobierają jeszcze danych ani nie wykonują obliczeń.</p></div>
+    <div className="scope-note"><PanelTop size={18} /><p>Zarządzaj instrumentami w module „Instrumenty”. Kolejne narzędzia analizy są w przygotowaniu.</p></div>
   </>;
 }
 
@@ -60,7 +61,7 @@ export function App() {
     </aside>
     <div className="workspace">
       <header className="topbar"><div className="breadcrumb"><Burger opened={menuOpened} onClick={() => setMenuOpened((opened) => !opened)} aria-label={menuOpened ? 'Zamknij menu' : 'Otwórz menu'} aria-expanded={menuOpened} aria-controls="main-navigation" size="sm" className="mobile-menu" /><span>Portfolio Manager</span><span className="breadcrumb-divider">/</span><strong>{currentName}</strong></div><Badge variant="outline" color="gray" className="stage-badge">Wersja wstępna</Badge></header>
-      <main id="main-content" tabIndex={-1}><Routes><Route path="/" element={<Overview />} />{modules.map((module) => <Route key={module.path} path={module.path} element={<Placeholder {...module} />} />)}<Route path="*" element={<Placeholder name="Nie znaleziono strony" description="Ten adres nie odpowiada żadnemu modułowi aplikacji." icon={CircleHelp} />} /></Routes></main>
+      <main id="main-content" tabIndex={-1}><Routes><Route path="/" element={<Overview />} />{modules.map((module) => <Route key={module.path} path={module.path} element={module.path === '/instruments' ? <InstrumentsPage /> : <Placeholder {...module} />} />)}<Route path="*" element={<Placeholder name="Nie znaleziono strony" description="Ten adres nie odpowiada żadnemu modułowi aplikacji." icon={CircleHelp} />} /></Routes></main>
       <footer className="page-footer"><span>Portfolio Manager</span><span>Twoje dane. Twoja perspektywa.</span></footer>
     </div>
   </div>;

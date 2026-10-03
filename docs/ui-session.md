@@ -63,8 +63,9 @@ i autoryzacji. Rozszerzenie backendu ma zachować dotychczasową funkcjonalnoś�
 
 ## Następny krok
 
-Użytkownik może przetestować layout i proces uruchamiania. Funkcje biznesowe UI
-pozostają do kolejnego etapu; niczego jeszcze nie podłączono do API.
+Użytkownik przetestował i wypchnął szkielet UI. Zlecił teraz listę i dodawanie
+instrumentów na podstawie istniejących endpointów Security. Moduł ten jest
+zaimplementowany; pozostałe ekrany czekają na dalsze instrukcje.
 
 ## Szkielet UI — wykonane
 
@@ -99,3 +100,28 @@ pozostają do kolejnego etapu; niczego jeszcze nie podłączono do API.
   wymagają jeszcze sprawdzenia przez użytkownika; nie deklarowano testu wizualnego.
 - Testowy JAR pozostawiono na http://127.0.0.1:8081 do obejrzenia layoutu;
   dostępność zależy od utrzymania procesu sesji. Nie używa bazy użytkownika.
+  Następnie zatrzymano go na prośbę użytkownika i potwierdzono brak odpowiedzi portu.
+
+## Instrumenty — wykonane
+
+- `/instruments` podłączono do GET i POST `/v1/security` bez zmiany backendu.
+- Tabela: nazwa, polski opis typu, symbol, giełda, waluta; toleruje brakujące
+  wartości starszych rekordów.
+- Modal dodawania: nazwa, typ (SHARE, ETF, CURRENCY), symbol, giełda i waluta.
+  Nazwa/symbol wymagane, waluta 3 litery, giełda opcjonalna. Przycinanie spacji,
+  normalizacja kodów do wielkich liter, długości zgodne z polami encji.
+- Po zapisie komunikat sukcesu, uzupełnienie cache i automatyczne odświeżenie listy.
+- Obsługa ładowania, pustej listy, błędów HTTP/sieci oraz ręczne ponowienie GET.
+- Nieudany POST zachowuje formularz. Podczas zapisu zablokowano ponowne wysłanie
+  i zamykanie modalu.
+- Dodano TanStack Query do obsługi danych serwera i wspólny klient JSON.
+- Zaktualizowano przegląd modułów, aby Instrumenty nie były oznaczone jako placeholder.
+- Dodano Vitest, Testing Library i jsdom; testy działają także w profilu Maven ui.
+- Testy interakcji obejmują kontrakt API, brakujące dane, ładowanie, pustą listę,
+  błąd HTML/proxy i ponowienie, dodawanie/odświeżenie, walidację, błąd zapisu
+  i ponowienie, blokadę podwójnego zapisu, błąd sieci oraz anulowanie formularza.
+- Samodzielne `npm test`: 8 testów przeszło; `npm run build` zakończone poprawnie.
+- Pełny `-Pui package`: BUILD SUCCESS, 42 testy backendu i 8 testów frontendu,
+  bez błędów (2026-10-03). Log: `ui-build.log`.
+- Nie uruchamiano dodatkowych serwerów ani nie dopisywano testowych instrumentów
+  do bazy użytkownika. Testy UI używają kontrolowanych odpowiedzi HTTP w jsdom.

@@ -5,6 +5,9 @@ import { BrowserRouter } from 'react-router-dom';
 import '@mantine/core/styles.css';
 import './styles.css';
 import { App } from './App';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+const queryClient = new QueryClient();
 
 const theme = createTheme({
   primaryColor: 'teal',
@@ -16,7 +19,9 @@ const theme = createTheme({
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <MantineProvider theme={theme} forceColorScheme="light">
-      <BrowserRouter><App /></BrowserRouter>
+      <QueryClientProvider client={queryClient}>
+        <BrowserRouter><App /></BrowserRouter>
+      </QueryClientProvider>
     </MantineProvider>
   </React.StrictMode>,
 );

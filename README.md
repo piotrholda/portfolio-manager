@@ -84,8 +84,9 @@ java -jar target/portfolio-manager-0.0.1-SNAPSHOT.jar --spring.profiles.active=d
 ```
 
 Open http://localhost:8080. The `dev` profile uses the existing local H2 database
-under `db/dev`. The UI has a responsive layout and placeholder module pages only;
-it does not call business APIs yet. API and Swagger remain at their existing URLs.
+under `db/dev`. The UI has a responsive layout. The Instruments page lists and
+creates securities through the existing `/v1/security` API. Other modules have
+placeholder pages. API and Swagger remain at their existing URLs.
 The Dockerfile also serves the UI when its input JAR was built with `-Pui`.
 Docker Compose currently starts only the Python service, not the Java application.
 
@@ -117,3 +118,22 @@ The source lives in `frontend/src`; build output goes to `frontend/dist`.
 The Maven profile copies that output into `BOOT-INF/classes/static` inside the JAR.
 Only the known UI routes are forwarded to `index.html`, so missing API endpoints
 and static assets continue to return 404.
+
+## Instruments UI
+
+Open the Instruments page (`/instruments`) to list securities or add a new one.
+The table shows name, type, symbol, exchange and currency. The form supports
+shares, ETFs and currencies. Name, symbol and a three-letter currency code are
+required; exchange is optional. Symbol, exchange and currency codes are normalized
+to uppercase. After a successful save the list refreshes automatically.
+Failed saves preserve entered values, and failed list requests can be retried.
+
+Frontend interaction tests use Vitest, Testing Library and jsdom:
+
+```powershell
+cd frontend
+npm.cmd test
+```
+
+These tests also run automatically with the Maven `ui` profile during the `test`
+phase, including the `package` build.
