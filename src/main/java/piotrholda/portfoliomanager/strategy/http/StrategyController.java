@@ -1,10 +1,17 @@
 package piotrholda.portfoliomanager.strategy.http;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
+import org.springframework.web.HttpMediaTypeNotAcceptableException;
+import org.springframework.web.bind.annotation.RequestHeader;
+import piotrholda.portfoliomanager.infrastructure.http.ResultMediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,14 +41,26 @@ class StrategyController {
 
     private final ExecuteDualEquityMomentum executeDualEquityMomentum;
 
-    @PostMapping(value = "/dualEquityMomentum", produces = "text/csv")
+    @PostMapping(value = "/dualEquityMomentum", produces = {"text/csv", "application/json"})
     @Operation(
             summary = "Execute Dual Equity Momentum strategy",
-            description = "Runs the Dual Equity Momentum strategy and returns a CSV with adjusted input quotations and buy transactions. "
+            description = "Runs the Dual Equity Momentum strategy and returns adjusted input quotations and buy transactions. "
+                    + "Use Accept: application/json for JSON; CSV remains the default. "
                     + "This endpoint shows what the strategy selected on each decision date, but it does not calculate portfolio performance."
     )
-    public ResponseEntity<String> dualEquityMomentum(@RequestBody DualEquityMomentumRequest request) {
+    @ApiResponse(responseCode = "200", content = {
+            @Content(mediaType = "application/json", schema = @Schema(implementation = StrategyResponse.class)),
+            @Content(mediaType = "text/csv", schema = @Schema(type = "string"))
+    })
+    public ResponseEntity<?> dualEquityMomentum(@RequestBody DualEquityMomentumRequest request,
+                                                @RequestHeader HttpHeaders requestHeaders)
+            throws HttpMediaTypeNotAcceptableException {
+        boolean json = ResultMediaType.isJson(requestHeaders);
         Strategy strategy = executeDualEquityMomentum.execute(request.toParams());
+        if (json) {
+            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
+                    .body(StrategyResponse.from(strategy));
+        }
         Map<Ticker, List<Quotation>> quotations = strategy.getQuotations();
         List<Transaction> transactions = strategy.getTransactions();
         List<Ticker> tickers = new ArrayList<>(quotations.keySet());
