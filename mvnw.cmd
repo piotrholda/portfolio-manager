@@ -1,7 +1,8 @@
 @ECHO OFF
 SETLOCAL
 
-set BASE_DIR=%~dp0
+rem Normalize the directory so a trailing backslash cannot escape the closing quote passed to Java.
+for %%I in ("%~dp0.") do set "BASE_DIR=%%~fI"
 set WRAPPER_DIR=%BASE_DIR%\.mvn\wrapper
 set WRAPPER_JAR=%WRAPPER_DIR%\maven-wrapper.jar
 set WRAPPER_PROPERTIES=%WRAPPER_DIR%\maven-wrapper.properties

@@ -2,10 +2,17 @@ package piotrholda.portfoliomanager.simulation.in.http;
 
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
+import org.springframework.web.HttpMediaTypeNotAcceptableException;
+import org.springframework.web.bind.annotation.RequestHeader;
+import piotrholda.portfoliomanager.infrastructure.http.ResultMediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,14 +42,26 @@ class SimulationController {
 
     private final SimulateDualEquityMomentum simulateDualEquityMomentum;
 
-    @PostMapping(value = "/dualEquityMomentum", produces = "text/csv")
+    @PostMapping(value = "/dualEquityMomentum", produces = {"text/csv", "application/json"})
     @Operation(
             summary = "Simulate Dual Equity Momentum portfolio performance",
             description = "Runs the Dual Equity Momentum strategy and then simulates portfolio performance from the generated transactions. "
-                    + "The returned CSV includes adjusted input quotations, normalized simulation results, and buy transactions."
+                    + "Returns normalized instrument and portfolio percentage changes and buy transactions. "
+                    + "Use Accept: application/json for JSON; CSV remains the default."
     )
-    public ResponseEntity<String> dualEquityMomentum(@RequestBody SimulateDualEquityMomentumRequest request) {
+    @ApiResponse(responseCode = "200", content = {
+            @Content(mediaType = "application/json", schema = @Schema(implementation = SimulationResponse.class)),
+            @Content(mediaType = "text/csv", schema = @Schema(type = "string"))
+    })
+    public ResponseEntity<?> dualEquityMomentum(@RequestBody SimulateDualEquityMomentumRequest request,
+                                                @RequestHeader HttpHeaders requestHeaders)
+            throws HttpMediaTypeNotAcceptableException {
+        boolean json = ResultMediaType.isJson(requestHeaders);
         Simulation simulation = simulateDualEquityMomentum.simulate(request.toParams());
+        if (json) {
+            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
+                    .body(SimulationResponse.from(simulation));
+        }
         List<Quotation> results = simulation.getResults();
         Map<Ticker, List<Quotation>> quotations = simulation.getQuotations();
         List<Transaction> transactions = simulation.getTransactions();
