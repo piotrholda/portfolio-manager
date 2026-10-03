@@ -2,6 +2,34 @@
 
 Aktualizacja: 2026-10-03.
 
+## Zamknięcie sesji — 2026-10-03
+
+- Użytkownik zakończył pracę na dziś. Brak rozpoczętych zadań wymagających dokończenia.
+- Moduł Instrumenty jest ukończony. W chwili zamykania sesji drzewo robocze było
+  czyste, a HEAD wskazywał `edc4dbc` (`Implement Instrument UI.`).
+  Niniejsza aktualizacja dokumentu jest jedyną zmianą wykonaną przy zamknięciu sesji.
+- Ostatnia weryfikacja: pełny build `-Pui package`, 42 testy backendu i 8 testów UI
+  zakończone sukcesem. Nie trzeba powtarzać testów dla samej aktualizacji tego pliku.
+- Agent nie pozostawił uruchomionych serwerów. Użytkownik uruchamiał backend
+  samodzielnie w IntelliJ; stan procesów uruchomionych przez użytkownika nie był sprawdzany.
+- Kolejny moduł nie został jeszcze wybrany. Przy wznowieniu ustalić zakres z użytkownikiem;
+  notowania/import, strategie i symulacje nadal mają puste ekrany.
+
+## Uruchomienie przy wznowieniu
+
+- Backend: istniejąca konfiguracja IntelliJ, zwykle port 8080.
+- Frontend: konfiguracja npm dla `frontend/package.json`, command `run`, script `dev`;
+  adres http://127.0.0.1:5173. Można połączyć konfiguracje przez Compound.
+- Po pobraniu nowych zależności wykonać `npm.cmd ci` w katalogu `frontend`.
+- Do Vite wymagany jest Node >=22.12.0; rekomendowano Node 24 LTS.
+  Użytkownik zgłaszał systemowy Node 21 i otrzymał instrukcję aktualizacji przez MSI.
+  Nie potwierdził jeszcze wykonania aktualizacji. W IntelliJ należy wskazać właściwy
+  interpreter Node; npm w PowerShell uruchamiać jako `npm.cmd`.
+- Build całości: `mvnw -Pui clean package`. Profil Maven instaluje własny Node 24.19.0,
+  niezależnie od wersji systemowej. Python API musi udostępniać OpenAPI na porcie 5000
+  dla istniejącego generatora klienta Java.
+- Testy UI: `npm.cmd test` w `frontend`; szczegóły obsługi aplikacji w README.
+
 ## Cel i etap
 
 Realizacja `.codex/prompts/ui.md`: UI w React w tym samym repozytorium,
