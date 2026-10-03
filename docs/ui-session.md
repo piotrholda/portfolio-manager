@@ -6,8 +6,9 @@ Aktualizacja: 2026-10-03.
 
 Realizacja `.codex/prompts/ui.md`: UI w React w tym samym repozytorium,
 wywoływanie istniejącego API, tabele i wykresy, trwały zapis stanu prac.
-Po dyskusji użytkownik zlecił najpierw dodanie JSON do strategii i symulacji.
-UI jest kolejnym etapem. Aplikacja pozostaje jednoużytkownikowa, bez autentykacji
+Backend JSON został ukończony i wypchnięty przez użytkownika. Następnie użytkownik
+zlecił szkielet UI z ogólnym layoutem, bez funkcji biznesowych, aby sprawdzić build
+i uruchamianie. Aplikacja pozostaje jednoużytkownikowa, bez autentykacji
 i autoryzacji. Rozszerzenie backendu ma zachować dotychczasową funkcjonalność.
 
 ## Ustalenia z kodu
@@ -19,7 +20,7 @@ i autoryzacji. Rozszerzenie backendu ma zachować dotychczasową funkcjonalnoś�
   instrumentów, symulacja dodatkowo znormalizowane wyniki portfela.
 - Import notowań obejmuje dostawcę danych i plik CSV.
 - Osobny serwis Python istnieje w `python-stock-api/`.
-- Maven kopiuje obecnie tylko zasoby YAML; osadzenie UI w JAR wymaga zmiany konfiguracji.
+- Profil Maven `ui` buduje frontend i kopiuje go do zasobów statycznych JAR-a.
 - `.codex/plan.md` wskazuje symulacje i wykresy jako cel, a model FIRE jako kolejny feature.
 
 ## Propozycja do dyskusji
@@ -62,5 +63,39 @@ i autoryzacji. Rozszerzenie backendu ma zachować dotychczasową funkcjonalnoś�
 
 ## Następny krok
 
-Backend zakończony i zweryfikowany. Wrócić do UI zgodnie z dalszymi instrukcjami
-użytkownika. Propozycja technologii powyżej pozostaje punktem wyjścia.
+Użytkownik może przetestować layout i proces uruchamiania. Funkcje biznesowe UI
+pozostają do kolejnego etapu; niczego jeszcze nie podłączono do API.
+
+## Szkielet UI — wykonane
+
+- `frontend/`: React, TypeScript, Vite, Mantine, React Router, ikony Lucide;
+  dokładne wersje w package.json i package-lock.json.
+- Polski layout: boczne menu, nagłówek, przegląd modułów, stopka, responsywne menu.
+- Puste ekrany: symulacje, strategie, instrumenty, notowania, zdarzenia korporacyjne.
+- Brak pobierania danych, przykładowych wyników, formularzy i obliczeń.
+- `mvnw -Pui clean package`: lokalny Node 24.19.0, npm ci, kontrola TypeScript,
+  Vite build, testy Java, frontend w `BOOT-INF/classes/static`.
+- Build backendu bez profilu ui nadal dostępny. Dockerfile korzysta z tego samego JAR-a.
+- Vite dev na 127.0.0.1:5173, proxy API do localhost:8080 (API_PROXY_TARGET umożliwia zmianę).
+- UiController przekazuje tylko jawnie wskazane trasy do index.html; brak ogólnego
+  fallbacku przechwytującego API lub pliki statyczne.
+- CI buduje profil ui i uruchamia Python API potrzebne istniejącemu generatorowi klienta.
+  Zmiany CI nie były uruchamiane na GitHub Actions w tej sesji.
+- Naprawiono mvnw.cmd: normalizacja BASE_DIR usuwa problem końcowego ukośnika
+  przed cudzysłowem. Wrapper -v działa; lokalne JAVA_HOME wskazuje JDK 21,
+  natomiast wykonany pełny build korzystał bezpośrednio z Javy 11.
+- README zawiera instrukcje budowania, uruchamiania i pracy z Vite.
+
+## Weryfikacja UI i pakowania
+
+- Pełny clean package z profilem ui: BUILD SUCCESS, 42 testy, bez błędów i pominięć.
+- Log pełnego builda: `ui-build.log` (ignorowany przez Git).
+- Uruchomiono wygenerowany JAR na porcie 8081 z tymczasową bazą H2 w pamięci;
+  sprawdzono HTTP 200 dla wszystkich 6 tras UI, JS/CSS, OpenAPI, Swagger i GET /v1/security.
+- Brakujący endpoint API i brakujący plik JS poprawnie zwracają HTTP 404.
+- Vite dev uruchomiony i sprawdzony: HTML, głęboka trasa, transformowane TSX i CSS
+  zwracają HTTP 200. Po sprawdzeniu serwer Vite zatrzymano.
+- Brak dostępnej przeglądarki w narzędziu CUA: wygląd i interakcje w przeglądarce
+  wymagają jeszcze sprawdzenia przez użytkownika; nie deklarowano testu wizualnego.
+- Testowy JAR pozostawiono na http://127.0.0.1:8081 do obejrzenia layoutu;
+  dostępność zależy od utrzymania procesu sesji. Nie używa bazy użytkownika.

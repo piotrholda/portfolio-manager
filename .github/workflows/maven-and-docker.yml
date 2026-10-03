@@ -23,8 +23,13 @@ jobs:
         distribution: 'adopt'
         cache: maven
 
-    - name: Build with Maven
-      run: mvn -B -Ddatasource.user=${{ secrets.DATASOURCE_USERNAME }} -Ddatasource.password=${{ secrets.DATASOURCE_PASSWORD }} package
+    - name: Start Python API for client generation
+      run: |
+        docker compose up --build -d python-api
+        curl --fail --retry 20 --retry-connrefused --retry-delay 3 http://localhost:5000/openapi.json -o /tmp/stock-openapi.json
+
+    - name: Build backend and UI with Maven
+      run: mvn -B -Pui -Ddatasource.user=${{ secrets.DATASOURCE_USERNAME }} -Ddatasource.password=${{ secrets.DATASOURCE_PASSWORD }} package
 
     - name: Build and publish docker image
       uses: mr-smithers-excellent/docker-build-push@v5
